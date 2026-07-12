@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
+    "framer-motion": "^12.42.2",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

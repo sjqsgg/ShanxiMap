@@ -12,28 +12,76 @@ declare global {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const SIZE: Record<Tier, number> = { 必去: 18, 推荐: 13, 小众: 10, 可选: 9 };
+const SIZE: Record<Tier, number> = { 必去: 16, 推荐: 10, 小众: 6, 可选: 6 };
+
+/** 山西省范围 + 缩放限制 */
+const SHANXI_BOUNDS: [[number, number], [number, number]] = [
+  [110.23, 34.58],
+  [114.56, 40.74],
+];
+const ZOOMS: [number, number] = [7, 14];
+
+/** 跨页面记住地图视野（详情页返回时恢复） */
+const VIEW_KEY = "sx:map-view";
+
+function saveView(map: any) {
+  try {
+    const c = map.getCenter();
+    sessionStorage.setItem(
+      VIEW_KEY,
+      JSON.stringify({ zoom: map.getZoom(), center: [c.getLng(), c.getLat()] })
+    );
+  } catch {
+    /* ignore */
+  }
+}
+
+function loadView(): { zoom: number; center: [number, number] } | null {
+  try {
+    const raw = sessionStorage.getItem(VIEW_KEY);
+    if (!raw) return null;
+    const v = JSON.parse(raw);
+    if (typeof v.zoom === "number" && Array.isArray(v.center)) return v;
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
 
 function iconUri(b: Building, selected: boolean): string {
   const color = TIER_COLOR[b.tier];
-  const d = SIZE[b.tier] + (selected ? 6 : 0);
+  const d = SIZE[b.tier] + (selected ? 5 : 0);
   const pad = 6;
   const s = d + pad * 2;
   const c = s / 2;
+  const isGrotto = b.type === "石窟寺及石刻";
   const ring = selected
     ? `<circle cx="${c}" cy="${c}" r="${d / 2 + 4}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.8"/>`
     : "";
+  const shape = isGrotto
+    ? `<rect x="${c - d / 2}" y="${c - d / 2}" width="${d}" height="${d}" fill="${color}" stroke="#fffdf6" stroke-width="1.4" transform="rotate(45 ${c} ${c})"/>`
+    : `<circle cx="${c}" cy="${c}" r="${d / 2}" fill="${color}" stroke="#fffdf6" stroke-width="1.4"/>`;
   const badge = b.yingzao
     ? `<rect x="${s - 11}" y="0" width="11" height="11" fill="#9e2b20"/><text x="${s - 5.5}" y="8.6" font-size="8" fill="#f8ecdc" text-anchor="middle" font-family="serif">测</text>`
     : "";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">${ring}<circle cx="${c}" cy="${c}" r="${d / 2}" fill="${color}" stroke="#fffdf6" stroke-width="1.6"/>${badge}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">${ring}${shape}${badge}</svg>`;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
+/** 名称label显示阈值：必去常显；推荐 zoom≥10；小众/可选 zoom≥11（hover时任何等级都显示） */
 function textZooms(tier: Tier): [number, number] {
   if (tier === "必去") return [2, 20];
-  if (tier === "推荐") return [8.2, 20];
-  return [9.2, 20];
+  if (tier === "推荐") return [10, 20];
+  return [11, 20];
+}
+
+function textStyle(b: Building, selected: boolean) {
+  return {
+    fontSize: b.tier === "必去" ? 13 : 12,
+    fillColor: selected ? "#9e2b20" : "#3d3120",
+    strokeColor: "#f3ecdc",
+    strokeWidth: 3,
+  };
 }
 
 export default function MapCanvas({
@@ -64,22 +112,47 @@ export default function MapCanvas({
       const AMap = await AMapLoader.load({
         key: process.env.NEXT_PUBLIC_AMAP_KEY ?? "",
         version: "2.0",
+        plugins: ["AMap.DistrictLayer"],
       });
       if (disposed || !elRef.current) return;
       amapRef.current = AMap;
+      const saved = loadView();
       const map = new AMap.Map(elRef.current, {
         viewMode: "2D",
-        center: [112.4, 37.6],
-        zoom: 7,
-        zooms: [6, 18],
+        center: saved?.center ?? [112.4, 37.7],
+        zoom: saved?.zoom ?? 7,
+        zooms: ZOOMS,
         mapStyle: "amap://styles/whitesmoke",
       });
+      // 锁定山西省范围
+      map.setLimitBounds(
+        new AMap.Bounds(SHANXI_BOUNDS[0], SHANXI_BOUNDS[1])
+      );
+      // 省 + 11地市行政边界
+      const district = new AMap.DistrictLayer.Province({
+        zIndex: 12,
+        adcode: [140000],
+        depth: 1,
+        styles: {
+          fill: "rgba(0,0,0,0)",
+          "province-stroke": "rgba(139,115,85,0.6)",
+          "city-stroke": "rgba(139,115,85,0.4)",
+          "county-stroke": "rgba(0,0,0,0)",
+        },
+      });
+      district.setMap(map);
       const layer = new AMap.LabelsLayer({ collision: true, zIndex: 120 });
       map.add(layer);
       map.on("click", () => onSelectRef.current(null));
+      map.on("moveend", () => saveView(map));
+      map.on("zoomend", () => saveView(map));
       mapRef.current = map;
       layerRef.current = layer;
       readyRef.current = true;
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).__sxMap = map;
+      }
       renderMarkers();
     })();
     return () => {
@@ -102,8 +175,8 @@ export default function MapCanvas({
     layer.clear();
     const markers = list.map((b) => {
       const selected = b.id === sel;
-      const d = SIZE[b.tier] + (selected ? 6 : 0) + 12;
-      const zooms = textZooms(b.tier);
+      const d = SIZE[b.tier] + (selected ? 5 : 0) + 12;
+      const zooms = selected ? [2, 20] : textZooms(b.tier);
       const m = new AMap.LabelMarker({
         position: [b.lng, b.lat],
         zIndex:
@@ -121,13 +194,8 @@ export default function MapCanvas({
           content: b.name,
           direction: "right",
           offset: [1, 0],
-          zooms: selected ? [2, 20] : zooms,
-          style: {
-            fontSize: b.tier === "必去" ? 13 : 12,
-            fillColor: selected ? "#9e2b20" : "#3d3120",
-            strokeColor: "#f3ecdc",
-            strokeWidth: 3,
-          },
+          zooms,
+          style: textStyle(b, selected),
         },
         extData: { id: b.id },
       });
@@ -135,6 +203,27 @@ export default function MapCanvas({
         const id = e.target?.getExtData?.()?.id;
         if (id) onSelectRef.current(id);
       });
+      // hover 显示名称（非常显等级）
+      if (b.tier !== "必去" && !selected) {
+        m.on("mouseover", () => {
+          m.setText({
+            content: b.name,
+            direction: "right",
+            offset: [1, 0],
+            zooms: [2, 20],
+            style: textStyle(b, false),
+          });
+        });
+        m.on("mouseout", () => {
+          m.setText({
+            content: b.name,
+            direction: "right",
+            offset: [1, 0],
+            zooms: textZooms(b.tier),
+            style: textStyle(b, false),
+          });
+        });
+      }
       return m;
     });
     if (markers.length) layer.add(markers);
@@ -146,14 +235,15 @@ export default function MapCanvas({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buildings, selectedId]);
 
-  // 选中时平移视野
+  // 选中时飞到该点
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !selectedId) return;
     const b = buildings.find((x) => x.id === selectedId);
     if (!b) return;
     const zoom = Math.max(map.getZoom(), 10.5);
-    map.setZoomAndCenter(zoom, [b.lng, b.lat], false, 400);
+    // limitBounds 会打断动画式 setZoomAndCenter，这里用立即跳转保证到位
+    map.setZoomAndCenter(zoom, [b.lng, b.lat], true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 

@@ -24,10 +24,10 @@ export type Building = {
 };
 
 export const TIER_COLOR: Record<Tier, string> = {
-  必去: "#b03a2e",
-  推荐: "#c87f41",
-  小众: "#a89a7e",
-  可选: "#c2b89e",
+  必去: "#8B1A1A",
+  推荐: "#8B5E3C",
+  小众: "#999990",
+  可选: "#b8b2a2",
 };
 
 /** 朝代筛选分组：把 北宋 归入 宋，近现代/明清等特殊值单独处理 */
@@ -63,6 +63,28 @@ export const CITIES = [
   "临汾市",
   "运城市",
 ] as const;
+
+/** 首页索引列表的地市顺序（按国保数量降序） */
+export const CITY_ORDER = [
+  "运城市",
+  "长治市",
+  "晋城市",
+  "晋中市",
+  "临汾市",
+  "吕梁市",
+  "忻州市",
+  "太原市",
+  "大同市",
+  "阳泉市",
+  "朔州市",
+] as const;
+
+export const TIER_RANK: Record<Tier, number> = {
+  必去: 0,
+  推荐: 1,
+  小众: 2,
+  可选: 3,
+};
 
 export const TYPE_GROUPS = [
   "古建筑",

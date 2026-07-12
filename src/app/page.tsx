@@ -1,12 +1,36 @@
 import Link from "next/link";
-import { MUST_SEE, STATS } from "@/lib/data";
-import ArchiveScroll from "@/components/ArchiveScroll";
-import EnterMap from "@/components/EnterMap";
+import { STATS } from "@/lib/data";
+import BlurText from "@/components/bits/BlurText";
+import CountUp from "@/components/bits/CountUp";
+import HomeClient from "@/components/home/HomeClient";
 
 function today(): string {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
   return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
+function Stat({
+  label,
+  value,
+  note,
+  accent,
+}: {
+  label: string;
+  value: number;
+  note: string;
+  accent?: boolean;
+}) {
+  return (
+    <div>
+      <p className="text-ink-faint">{label}</p>
+      <CountUp
+        value={value}
+        className={`mt-1 block text-2xl ${accent ? "text-cinnabar" : "text-ink"}`}
+      />
+      <p className="text-ink-faint">{note}</p>
+    </div>
+  );
 }
 
 export default function Home() {
@@ -31,59 +55,44 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 封面 */}
+      {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
         <p className="font-mono text-xs tracking-[0.3em] text-ink-faint">
           [ 山西省 · 古建筑访古档案 ]
         </p>
         <h1 className="mt-6 font-serif text-6xl font-bold leading-[1.05] tracking-tight text-ink sm:text-8xl md:text-9xl">
-          山西
-          <br />
-          访古档案
+          <BlurText text={"山西\n访古档案"} stagger={0.09} />
         </h1>
         <div className="dotted-rule mt-10 h-px w-full" />
         <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-4 font-mono text-xs text-ink-soft sm:grid-cols-5">
-          <div>
-            <p className="text-ink-faint">收录</p>
-            <p className="mt-1 text-2xl text-ink">{STATS.total}</p>
-            <p className="text-ink-faint">处国保单位</p>
-          </div>
-          <div>
-            <p className="text-ink-faint">唐构</p>
-            <p className="mt-1 text-2xl text-cinnabar">{STATS.tang}</p>
-            <p className="text-ink-faint">全国唐五代木构大半在此</p>
-          </div>
-          <div>
-            <p className="text-ink-faint">五代辽宋金</p>
-            <p className="mt-1 text-2xl text-ink">{STATS.songjin}</p>
-            <p className="text-ink-faint">早期木构的黄金库</p>
-          </div>
-          <div>
-            <p className="text-ink-faint">元构</p>
-            <p className="mt-1 text-2xl text-ink">{STATS.yuan}</p>
-            <p className="text-ink-faint">存量全国第一</p>
-          </div>
-          <div>
-            <p className="text-ink-faint">营造学社考察</p>
-            <p className="mt-1 text-2xl text-ink">{STATS.yingzao}</p>
-            <p className="text-ink-faint">梁思成林徽因足迹</p>
-          </div>
+          <Stat label="收录" value={STATS.total} note="处国保单位" />
+          <Stat
+            label="唐构"
+            value={STATS.tang}
+            note="全国唐五代木构大半在此"
+            accent
+          />
+          <Stat
+            label="五代辽宋金"
+            value={STATS.songjin}
+            note="早期木构的黄金库"
+          />
+          <Stat label="元构" value={STATS.yuan} note="存量全国第一" />
+          <Stat
+            label="营造学社考察"
+            value={STATS.yingzao}
+            note="梁思成林徽因足迹"
+          />
         </div>
         <p className="mt-16 max-w-xl font-serif text-base leading-relaxed text-ink-soft">
           中国现存元代以前木构建筑，八成在山西。这里不谈网红与打卡，
           只按档案的方式，把 532 处全国重点文物保护单位一一归档：
           从五台山中的唐代大殿，到浊漳河谷无人问津的五代小庙。
         </p>
-        <p className="mt-24 animate-bounce text-center font-mono text-xs tracking-widest text-ink-faint">
-          ↓ 向下滚动，查阅必去卷宗
-        </p>
       </section>
 
-      {/* 必去档案卷宗 */}
-      <ArchiveScroll buildings={MUST_SEE} />
-
-      {/* 磨砂过渡 → 地图 */}
-      <EnterMap total={STATS.total} />
+      {/* 档案袋 → 地图 + 索引 + 抽屉 */}
+      <HomeClient />
 
       <footer className="border-t border-line px-6 py-8 text-center font-mono text-[11px] text-ink-faint">
         <p>数据来源：全国重点文物保护单位名单（第一至八批）· 坐标系 GCJ-02</p>

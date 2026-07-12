@@ -2,14 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BUILDINGS, byId } from "@/lib/data";
-import type { Building, Tier } from "@/lib/types";
+import type { Tier } from "@/lib/types";
 import { DEFAULT_TYPES, dynastyGroup } from "@/lib/types";
+import { useIsDesktop } from "@/lib/useIsDesktop";
 import MapCanvas from "./MapCanvas";
 import FilterPanel from "./FilterPanel";
 import Sidebar from "./Sidebar";
-import DetailCard from "./DetailCard";
+import PreviewDrawer from "./PreviewDrawer";
 
 export type Filters = {
   dynasties: string[];
@@ -67,10 +69,9 @@ export default function MapApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // URL 同步（replace，不产生历史记录）
+  // URL 同步（replace，不产生历史记录）；详情深链已迁移至 /site/[id]，不再写 id
   useEffect(() => {
     const p = new URLSearchParams();
-    if (selectedId) p.set("id", String(selectedId));
     if (filters.dynasties.length) p.set("dyn", filters.dynasties.join(","));
     if (filters.cities.length) p.set("city", filters.cities.join(","));
     if (filters.tiers.length) p.set("tier", filters.tiers.join(","));
@@ -104,14 +105,21 @@ export default function MapApp() {
 
   const selected = selectedId ? byId(selectedId) ?? null : null;
   const onSelect = useCallback((id: number | null) => setSelectedId(id), []);
+  const desktop = useIsDesktop();
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-paper">
-      <MapCanvas
-        buildings={filtered}
-        selectedId={selectedId}
-        onSelect={onSelect}
-      />
+      <motion.div
+        className="absolute inset-0"
+        animate={{ x: selected && desktop ? "-15vw" : "0vw" }}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      >
+        <MapCanvas
+          buildings={filtered}
+          selectedId={selectedId}
+          onSelect={onSelect}
+        />
+      </motion.div>
 
       {/* 顶栏 */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-2 p-3 sm:p-4">
@@ -169,21 +177,21 @@ export default function MapApp() {
         />
       )}
 
-      {/* 档案卡 */}
-      {selected && (
-        <DetailCard building={selected} onClose={() => onSelect(null)} />
-      )}
+      {/* 预览抽屉 */}
+      <PreviewDrawer building={selected} onClose={() => onSelect(null)} />
 
       {/* 图例 */}
-      <div className="pointer-events-none absolute bottom-2 right-2 z-10 hidden sm:block">
+      <div className="pointer-events-none absolute bottom-2 left-2 z-10 hidden sm:block">
         <div className="frosted border border-line px-3 py-2 font-mono text-[10px] leading-relaxed text-ink-soft">
           <p>
-            <span className="mr-1 inline-block h-3 w-3 rounded-full bg-cinnabar align-[-2px]" />
+            <span className="mr-1 inline-block h-3 w-3 rounded-full bg-[#8B1A1A] align-[-2px]" />
             必去
-            <span className="ml-3 mr-1 inline-block h-2.5 w-2.5 rounded-full bg-ochre align-[-1px]" />
+            <span className="ml-3 mr-1 inline-block h-2.5 w-2.5 rounded-full bg-[#8B5E3C] align-[-1px]" />
             推荐
-            <span className="ml-3 mr-1 inline-block h-2 w-2 rounded-full bg-stone" />
+            <span className="ml-3 mr-1 inline-block h-2 w-2 rounded-full bg-[#999990]" />
             小众
+            <span className="ml-3 mr-1 inline-block h-2 w-2 rotate-45 bg-[#999990]" />
+            石窟
             <span className="ml-3 border border-seal px-1 text-seal">测</span>
             营造学社
           </p>
