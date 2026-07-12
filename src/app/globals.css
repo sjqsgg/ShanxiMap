@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  /* 纸 */
+  --color-paper: #f3ecdc;
+  --color-paper-deep: #ece2c9;
+  --color-paper-card: #fffdf6;
+  /* 墨 */
+  --color-ink: #3d3120;
+  --color-ink-soft: #6b5c42;
+  --color-ink-faint: #8a7a5e;
+  /* 线 */
+  --color-line: #d8cbae;
+  --color-line-strong: #b5a582;
+  /* 等级 */
+  --color-cinnabar: #b03a2e;
+  --color-ochre: #c87f41;
+  --color-stone: #a89a7e;
+  --color-seal: #9e2b20;
+
+  --font-serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --font-mono: var(--font-plex-mono), "SFMono-Regular", Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* 纸面颗粒 */
+.paper-grain {
+  background-image: radial-gradient(rgba(120, 100, 60, 0.055) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* 点状分隔线（Virgil 档案表头语言） */
+.dotted-rule {
+  background-image: linear-gradient(
+    to right,
+    var(--color-line-strong) 33%,
+    transparent 0%
+  );
+  background-position: bottom;
+  background-size: 5px 1px;
+  background-repeat: repeat-x;
+}
+
+/* 毛玻璃纸 */
+.frosted {
+  background: rgba(243, 236, 220, 0.72);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+}
+.frosted-card {
+  background: rgba(255, 253, 246, 0.82);
+  backdrop-filter: blur(16px) saturate(1.05);
+  -webkit-backdrop-filter: blur(16px) saturate(1.05);
+}
+
+/* 印章 */
+.seal-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-seal);
+  color: var(--color-seal);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  transform: rotate(-6deg);
+}
+
+/* 高德版权信息调淡，与纸面协调 */
+.amap-copyright,
+.amap-logo {
+  opacity: 0.6;
+}
+
+::selection {
+  background: rgba(176, 58, 46, 0.18);
+}
