@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""营造学社字段写入：按 FABLE_TASK_yingzao.md，仅标注文献确认的建筑（按id精确匹配）"""
+"""营造学社字段写入：仅标注下方文献清单确认的建筑（按 id 精确匹配）。"""
 import csv, json, io
 
 ROOT = "/Users/a77/Downloads/ShanxiMap"
