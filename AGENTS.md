@@ -61,6 +61,28 @@ At minimum, run `npx tsc --noEmit` for TypeScript changes and `npm run build` fo
 
 ## Agent skills
 
+The repository vendors 12 workflow skills under `.codex/skills/`. The inventory, upstream commit, and licence are recorded in `.codex/skills/README.md`.
+
+User-facing workflow skills:
+
+- `setup-matt-pocock-skills`
+- `grill-with-docs`
+- `to-spec`
+- `to-tickets`
+- `implement`
+- `improve-codebase-architecture`
+
+Supporting skills invoked by those workflows when relevant:
+
+- `grilling`
+- `domain-modeling`
+- `tdd`
+- `diagnosing-bugs`
+- `codebase-design`
+- `code-review`
+
+The two sections below configure how those skills use this repository; they are not the complete skill inventory.
+
 ### Issue tracker
 
 Issues and specs live as local Markdown under `.scratch/`. See `docs/agents/issue-tracker.md`.

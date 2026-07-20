@@ -8,25 +8,37 @@ This glossary defines the terms used in product discussion, code, specs, and tes
 
 The product as a whole. It presents Shanxi's nationally protected heritage sites through an archival visual language rather than as a generic points-of-interest map.
 
-### Archive / 档案
+### Site archive / 地点档案
 
-The product representation of one heritage-site record. An archive has a stable numeric `id`, protection batch metadata, location, chronology, classification, coordinates, description, and optional enrichment.
+The product's data and presentation unit for one heritage site. A site archive has a stable numeric `id`, protection batch metadata, location, chronology, classification, coordinates, description, and optional enrichment. Use “地点档案” when the distinction from a page or the collection matters.
 
-### Archive hall / 档案馆
+### Homepage / 首页
 
-The narrative homepage at `/`. It introduces the collection, embeds a browsable map, and provides a city-grouped index.
+The primary experience at `/`. It begins with the archive-themed introduction and archive-bag transition; scrolling then reveals the homepage map and city-grouped index. “档案馆” is a visual metaphor for this entire experience, not a separate feature or route.
 
-### Map workbench / 地图工作台
+### Homepage map / 首页地图
 
-The dedicated full-screen map at `/map`. It supports search, multi-select filters, a result list, selection, and preview.
+The map revealed inside the homepage after the narrative section. It uses single-select filters and shares `MapCanvas` and the preview drawer with the dedicated map page.
 
-### Site dossier / 完整档案
+### Dedicated map page / 独立地图页
 
-The detail page at `/site/[id]`. This is the canonical deep link for a selected archive. `/map?id=...` is legacy behavior and must not be treated as the detail URL.
+The optional full-screen map at `/map`. It supports search, multi-select filters, a result list, URL-persisted filters, selection, and preview. It is an alternate focused view, not the only or necessarily primary map experience.
+
+### Archive preview / 档案预览
+
+The drawer opened when a site is selected from either map or the homepage index. It shows a subset of the site archive and links to its detail page.
+
+### Archive detail page / 档案详情页
+
+The route `/site/[id]` for one site archive. This is the canonical deep link for a selected site. `/map?id=...` is legacy behavior and must not be treated as the detail URL.
+
+### Visitor notes / 访客笔记（评论区）
+
+The community-oriented section displayed on an archive detail page. The current textarea and submit button are UI placeholders: text is only component state, submission is disabled, and nothing is stored. It represents intended product direction, not a functioning comment system.
 
 ### Heritage site / 国保单位
 
-One of the 532 records in the current collection of Shanxi entries from the first through eighth batches of 全国重点文物保护单位. Use “heritage site” or “archive” in engineering prose; avoid introducing synonymous entity names such as attraction or venue.
+One of the 532 records in the current collection of Shanxi entries from the first through eighth batches of 全国重点文物保护单位. Use “heritage site” or “site archive” in engineering prose; avoid introducing synonymous entity names such as attraction or venue.
 
 ### Visit tier / 访古等级
 

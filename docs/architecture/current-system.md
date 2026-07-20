@@ -14,9 +14,9 @@ src/data/buildings.json
         v
 src/lib/data.ts + src/lib/types.ts
         |
-        +--> /                  HomeClient + embedded MapCanvas
-        +--> /map               MapApp + MapCanvas
-        +--> /site/[id]         statically generated dossiers
+        +--> /                  HomeClient + homepage MapCanvas
+        +--> /map               dedicated MapApp + MapCanvas
+        +--> /site/[id]         statically generated archive details
 
 AMap loader <------------------ browser environment variables
 ```
@@ -29,7 +29,7 @@ AMap loader <------------------ browser environment variables
 
 - `src/app/page.tsx`: server-rendered homepage shell and collection statistics.
 - `src/app/map/page.tsx`: dedicated map route with a Suspense boundary.
-- `src/app/site/[id]/page.tsx`: static parameter generation and one-site dossier.
+- `src/app/site/[id]/page.tsx`: static parameter generation and one-site archive detail, including placeholder community controls.
 
 ### Client interaction
 
@@ -37,6 +37,7 @@ AMap loader <------------------ browser environment variables
 - `src/components/map/MapApp.tsx`: dedicated map filters, query-string synchronisation, selection, list/panel state, and preview.
 - `src/components/map/MapCanvas.tsx`: AMap SDK loading and lifecycle, province layer, label markers, map view persistence, selection rendering, and camera movement.
 - `PreviewDrawer.tsx` is shared by both map experiences.
+- `SitePlaceholders.tsx` renders disabled visitor-note, check-in, and favourite UI. It has no persistence, identity, submission, or backend integration.
 
 ### Domain and data access
 
