@@ -37,7 +37,9 @@ AMap loader <------------------ browser environment variables
 - `src/components/map/MapApp.tsx`: dedicated map filters, query-string synchronisation, selection, list/panel state, and preview.
 - `src/components/map/MapCanvas.tsx`: AMap SDK loading and lifecycle, province layer, label markers, map view persistence, selection rendering, and camera movement.
 - `PreviewDrawer.tsx` is shared by both map experiences.
-- `SitePlaceholders.tsx` renders disabled visitor-note, check-in, and favourite UI. It has no persistence, identity, submission, or backend integration.
+- `SitePlaceholders.tsx` renders disabled visitor-note and visit-state UI. It has no persistence, identity, submission, or backend integration. Its combined “我要去 · 收藏” label conflicts with the accepted two-state model and is obsolete placeholder copy.
+
+The accepted first-release visit-state model is private rather than aggregate: guest “visited” and “want to visit” markers remain device-local, registered users may synchronise them later, and no public per-site counts are required.
 
 ### Domain and data access
 
@@ -67,6 +69,7 @@ Two current behaviors also differ from the accepted experience:
 - Homepage index entries currently select a site, scroll back to the map, and open the shared preview drawer. The intended behavior is to open the archive detail directly.
 - The fixed archive-detail header currently includes an AMap navigation link. The intended placement is within the detail content; the large header's final contents are not yet decided.
 - The archive-detail return link currently always targets `/#map`. The intended behavior is contextual: restore the originating homepage map, homepage index, or `/map` state, with the homepage top as the fallback for a directly opened shared link.
+- The homepage footer currently says “不蹭任何IP”. The accepted product principle permits relevant popular-culture and trend connections while explicitly excluding *Black Myth: Wukong*; runtime copy has not yet been updated.
 
 `/site/[id]` is the canonical detail route. `MapApp` may read a legacy `id` query parameter on initial load, but it no longer writes selection IDs to the map URL.
 

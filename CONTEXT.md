@@ -40,7 +40,23 @@ The route `/site/[id]` for one site archive. This is the canonical deep link for
 
 ### Public comment / 公开评论
 
-A shareable, public user response attached to an archive detail page. It is not a private travel note. The current UI labelled “访客笔记” is only a disabled placeholder and does not yet create public comments.
+A shareable, public user response attached to an archive detail page. Guests may publish one without registering, but cannot later edit or delete it themselves; registered users can manage their own comments. It is not a private travel note. The current UI labelled “访客笔记” is only a disabled placeholder and does not yet create public comments.
+
+### Guest / 游客
+
+A person using the product without registering or signing in. A guest has access to the complete core experience, including publishing public comments; an account may enhance recovery or synchronisation but is not an access gate.
+
+### Registered user / 注册用户
+
+A person who has chosen persistent identity in order to synchronise and manage personal data. Registration adds continuity and management for comments and visited/want-to-visit state; it does not unlock otherwise restricted browsing or discovery features.
+
+### Visited / 我去过
+
+A personal marker that the user has visited a heritage site at least once. It records past experience and can coexist with “我想去” when the user wants to return.
+
+### Want to visit / 我想去
+
+A personal marker of current intent to visit or revisit a heritage site. It is independent from “我去过”, not its opposite.
 
 ### Heritage site / 国保单位
 

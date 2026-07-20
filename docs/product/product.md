@@ -16,7 +16,8 @@ The product uses the metaphor of a paper archive: official batch, year, chronolo
 
 ## Product principles
 
-- Heritage-first: do not depend on game, film, celebrity, or “viral destination” framing.
+- Heritage-led, culturally opportunistic: keep the archive grounded in historic architecture and reliable information, while actively using relevant films, public figures, trends, and popular-culture connections when they help discovery or distribution.
+- Explicit editorial exclusion: do not use *Black Myth: Wukong* (《黑神话：悟空》) as a promotional hook, content association, or framing device.
 - Evidence-aware: distinguish sourced facts, generated summaries, editorial rankings, approximate coordinates, and unknown information.
 - Practical discovery: help users search, filter, locate, and preview a site, then explicitly hand navigation off to AMap.
 - Archival visual language: paper, ink, cinnabar, monospaced metadata, rules, seals, and restrained frosted overlays.
@@ -46,7 +47,7 @@ The product uses the metaphor of a paper archive: official batch, year, chronolo
 ### `/site/[id]` — archive detail page
 
 - Displays one archive's metadata, description, image when available, practical enrichment, navigation action, and nearby sites.
-- Displays a visitor-notes/comment placeholder and disabled check-in/favourite controls.
+- Displays a visitor-notes/comment placeholder and disabled visit-state controls.
 - Is statically generated for all 532 records in production builds.
 
 ### Community interaction status
@@ -54,10 +55,23 @@ The product uses the metaphor of a paper archive: official batch, year, chronolo
 The product already presents intended community surfaces on archive detail pages:
 
 - visitor notes/comments;
-- “我去过” check-in;
-- “我要去” favourite.
+- “我去过” visit state;
+- the current combined “我要去 · 收藏” placeholder.
 
 The intended comment model is public and shareable on each archive detail page, not a private travel notebook. It is not functional yet: the current controls are disabled, visitor-note text is not submitted or persisted, and there is no identity, storage, moderation, or backend model. Turning these surfaces into real features requires a separate product and technical spec; their presence must not be documented as completed functionality.
+
+Registration is not required to publish a public comment. Guest comments use an AO3-style contract: the visitor supplies a public display name, a private email address, and comment text; the comment is stored server-side and may be moderated before publication. A guest cannot later edit or delete the comment themselves. Site moderation handles approval, abuse, and deletion requests.
+
+The core product remains fully usable without registration. “去过 / 想去” may start as local browser state, but local-only state is lost when site data is cleared or when the user changes browser/device.
+
+Registration is an optional continuity and management layer, not an access gate. A registered user can manage their own comments and synchronise/manage visited and want-to-visit lists without the limitations of device-local guest state. Registration must not become a browsing, discovery, navigation-handoff, reading, or commenting requirement.
+
+Guest-to-account migration follows two different rules:
+
+- Existing guest comments remain guest comments and are not automatically claimed by a later account, even when the email address matches. Comments created while signed in belong to the account and can be managed by that user.
+- Device-local visited and want-to-visit state may be uploaded and merged into the account on first registration/sign-in from that browser.
+
+This avoids unsafe historical comment claiming while preserving the personal collection the user has intentionally built on the current device.
 
 ## Accepted experience model
 
@@ -91,7 +105,7 @@ A map marker benefits from an intermediate preview because the user is exploring
 
 AMap navigation belongs to the archive detail content as an explicit site action. It does not belong in the large global/detail header.
 
-The large header's responsibilities are fixed, but its copy and layout are deliberately deferred to a dedicated UI spec. It should orient the user, provide a route back or home, and carry product identity. It should not be filled with site-specific actions such as AMap navigation, favourite, or share merely to occupy a layout slot.
+The large header's responsibilities are fixed, but its copy and layout are deliberately deferred to a dedicated UI spec. It should orient the user, provide a route back or home, and carry product identity. It should not be filled with site-specific actions such as AMap navigation, visit state, or share merely to occupy a layout slot.
 
 Archive-detail return behavior is contextual:
 
@@ -126,5 +140,21 @@ These values describe the committed dataset at the status date; documentation mu
 - Should homepage and map filters intentionally differ, or should they share one domain model and only vary in presentation?
 - Which data corrections should users be able to report, and how should reports be reviewed?
 - Which historical claims require first-party or scholarly citations before publication?
-- What identity, moderation, abuse prevention, and privacy model is required before community interactions become functional?
+- What lightweight registration method should provide persistent identity without creating a high-friction onboarding flow?
+- What moderation, abuse prevention, deletion-request, and private-email handling rules are required before guest comments become functional?
+- Which no-account personal-state recovery is worthwhile: explicit export/import, optional cloud sync, or both?
+
+## Accepted personal-state scope
+
+The product has two personal site states: “我去过” and “我想去”. A separate favourite/bookmark state is intentionally excluded because users do not have a sufficiently distinct reason to choose it over “我想去”.
+
+The two markers are independent rather than mutually exclusive. A user may mark the same site as both visited and want-to-visit, expressing a previous visit and an intention to return. Setting either marker must not implicitly clear the other.
+
+In the first release, these markers are private personal-list state only. Archive detail pages do not display aggregate “people visited” or “people want to visit” counts, and guest markers are not sent to the server merely to produce public totals. This avoids anonymous deduplication, inflated counts, and extra privacy/abuse handling before demonstrated demand.
+
+The current disabled button labelled “我要去 · 收藏” is an obsolete placeholder and must not define the future data model or copy.
 - What exact desktop and mobile layout best fulfils the agreed large-header responsibilities?
+
+## Known content mismatch
+
+The current homepage footer still says “不蹭任何IP”. That copy reflects an older, broader restriction and conflicts with the accepted editorial principle above. It should be replaced in a future reviewed UI/content change; this product-document update does not silently change runtime copy.
