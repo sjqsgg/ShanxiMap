@@ -16,25 +16,31 @@ The product's data and presentation unit for one heritage site. A site archive h
 
 The primary experience at `/`. It begins with the archive-themed introduction and archive-bag transition; scrolling then reveals the homepage map and city-grouped index. “档案馆” is a visual metaphor for this entire experience, not a separate feature or route.
 
-### Homepage map / 首页地图
+### Map explorer / 地图探索器
 
-The map revealed inside the homepage after the narrative section. It uses single-select filters and shares `MapCanvas` and the preview drawer with the dedicated map page.
+The shared product experience for discovering site archives through a map: filtering, searching, selecting, previewing, and opening an archive detail. It does not plan routes or provide navigation; navigation is handed off to AMap when the user explicitly requests it.
 
-### Dedicated map page / 独立地图页
+The explorer appears in two presentation modes: revealed inside the homepage after the archive-bag narrative, and opened directly as a full-screen view.
 
-The optional full-screen map at `/map`. It supports search, multi-select filters, a result list, URL-persisted filters, selection, and preview. It is an alternate focused view, not the only or necessarily primary map experience.
+### Direct map view / 地图直达模式
+
+The `/map` route, which opens the shared map explorer full-screen without replaying the homepage narrative. It serves returning, field-use, and shared-link scenarios; it is not a separate map product.
 
 ### Archive preview / 档案预览
 
-The drawer opened when a site is selected from either map or the homepage index. It shows a subset of the site archive and links to its detail page.
+The narrow drawer opened when a site marker is selected on the Shanxi map. It shows a subset of the site archive and links to its detail page. The full building index does not use this intermediate step.
+
+### Building index / 建筑总索引
+
+The city-grouped list shown after the homepage map. Selecting an entry is an explicit choice and opens the archive detail page directly, without returning the user to the map or opening an archive preview.
 
 ### Archive detail page / 档案详情页
 
-The route `/site/[id]` for one site archive. This is the canonical deep link for a selected site. `/map?id=...` is legacy behavior and must not be treated as the detail URL.
+The route `/site/[id]` for one site archive. This is the canonical deep link for a selected site. It contains the action that hands navigation off to AMap; external navigation is not a global-header action. `/map?id=...` is legacy behavior and must not be treated as the detail URL.
 
-### Visitor notes / 访客笔记（评论区）
+### Public comment / 公开评论
 
-The community-oriented section displayed on an archive detail page. The current textarea and submit button are UI placeholders: text is only component state, submission is disabled, and nothing is stored. It represents intended product direction, not a functioning comment system.
+A shareable, public user response attached to an archive detail page. It is not a private travel note. The current UI labelled “访客笔记” is only a disabled placeholder and does not yet create public comments.
 
 ### Heritage site / 国保单位
 

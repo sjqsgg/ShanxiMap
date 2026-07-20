@@ -60,6 +60,14 @@ The homepage and dedicated map intentionally use different filter shapes today:
 
 Both independently implement filtering, selection, map displacement, legends, and preview wiring. `MapCanvas` is shared, but the surrounding domain logic is duplicated.
 
+The accepted product model is one shared map explorer with homepage and direct presentation modes. The current duplicated surrounding logic does not yet implement that model and should be reconciled through tested vertical slices. The explorer itself is for discovery and selection; route navigation remains an external AMap handoff.
+
+Two current behaviors also differ from the accepted experience:
+
+- Homepage index entries currently select a site, scroll back to the map, and open the shared preview drawer. The intended behavior is to open the archive detail directly.
+- The fixed archive-detail header currently includes an AMap navigation link. The intended placement is within the detail content; the large header's final contents are not yet decided.
+- The archive-detail return link currently always targets `/#map`. The intended behavior is contextual: restore the originating homepage map, homepage index, or `/map` state, with the homepage top as the fallback for a directly opened shared link.
+
 `/site/[id]` is the canonical detail route. `MapApp` may read a legacy `id` query parameter on initial load, but it no longer writes selection IDs to the map URL.
 
 ## External dependencies and trust boundaries

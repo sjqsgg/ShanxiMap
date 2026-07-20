@@ -62,6 +62,8 @@ The current baseline supports this sequence:
 
 Every numbered item is a separate effort with its own spec. Do not create one “refactor everything” implementation ticket.
 
+The map-state effort must preserve the accepted product distinctions recorded in `docs/product/product.md`: marker preview versus direct index navigation, contextual return from archive details, and a single map explorer presented through homepage and direct modes.
+
 ## Review gates
 
 Before implementation:
