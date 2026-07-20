@@ -18,11 +18,14 @@ Treat code, data, and successful verification as current facts. Historical promp
 ```bash
 npm install
 npm run dev
-npx tsc --noEmit
+npm run lint
+npm run typecheck
 npm run build
 ```
 
-`npm run lint` currently invokes the removed `next lint` command and is not a valid quality gate. Do not claim lint passed until the script is replaced with a working ESLint command.
+`npm run lint` reports the repository's current warnings as well as errors. Do
+not describe a warning-producing run as warning-free; include the warning count
+in verification evidence until those warnings are resolved separately.
 
 ## Repository boundaries
 
@@ -59,7 +62,7 @@ For every implementation, report:
 - checks not run and why;
 - remaining risks or unknowns.
 
-At minimum, run `npx tsc --noEmit` for TypeScript changes and `npm run build` for changes that affect runtime behavior or static generation. Add focused automated tests once the test runner exists.
+At minimum, run `npm run typecheck` for TypeScript changes and `npm run build` for changes that affect runtime behavior or static generation. Add focused automated tests once the test runner exists.
 
 ## Agent skills
 
