@@ -2,7 +2,7 @@
 
 Status: `src/data/buildings.json` at 2026-07-20
 
-The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`; runtime validation does not yet exist.
+The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. `npm run validate:data` now checks the collection shape, essential identity and map-display primitive types, unique IDs, finite coordinates, and visit tiers through a deterministic baseline validator.
 
 ## Identity and classification
 
@@ -68,8 +68,9 @@ Current enrichment coverage: 144 images, 102 telephone values, and 384 non-zero 
 ## Contract gaps
 
 - Optionality in TypeScript has not been checked against every JSON value at runtime.
-- Free-form `type`, `yingzao`, provenance, URLs, and string ratings need explicit validation rules.
+- Free-form `type`, `yingzao`, provenance, URLs, and string ratings need exact validation rules beyond the current broad primitive checks.
 - Cross-field rules are not enforced, such as requiring `yingzao_source` when `yingzao` is present.
-- Coordinate ranges, unique IDs, supported enums, and image attribution are not checked during `npm run build`.
+- Positive-integer ID rules, geographic coordinate ranges, complete supported enums, and image attribution are not yet checked.
+- The baseline validator is a separate command; the application still loads the JSON through a TypeScript assertion, and `npm run build` does not invoke the command directly.
 
-The next quality-gate phase should encode these rules in a deterministic validator before reorganising the pipeline.
+The later complete-contract effort should extend the same validator seam with these rules before the pipeline is reorganised.

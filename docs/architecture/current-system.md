@@ -45,7 +45,7 @@ The accepted first-release visit-state model is private rather than aggregate: g
 
 - `src/lib/types.ts`: TypeScript data shape, enums, grouping constants, colours, and archive-number formatting.
 - `src/lib/data.ts`: imports the runtime JSON, asserts it to `Building[]`, derives statistics, grouping, distance, and nearby-site results.
-- There is no runtime schema validation between JSON and TypeScript.
+- The application import boundary still asserts JSON as TypeScript without validation. A separate baseline command validates essential collection fields, but it is not yet the complete runtime schema or part of application loading.
 
 ### Data tooling
 
@@ -84,9 +84,9 @@ Two current behaviors also differ from the accepted experience:
 
 1. `MapCanvas` combines SDK adaptation, persistence, marker presentation, selection events, and camera policy behind `any`-typed AMap objects.
 2. Homepage and `/map` duplicate filter and selection domain behavior with incompatible state shapes.
-3. The runtime dataset crosses into TypeScript through `as unknown as Building[]` with no schema check.
-4. There is no automated test runner or data-validation gate.
-5. `npm run lint` points to `next lint`, which is not a valid command for the installed Next.js version.
+3. The runtime dataset crosses into TypeScript through `as unknown as Building[]`; the new baseline validator is still separate from this application import boundary and does not encode the complete schema.
+4. A lightweight test runner and baseline data-validation command now exist, but the aggregate local check and GitHub CI gate are not yet connected.
+5. The explicit ESLint command passes, but it still reports six known source warnings that require separate, behavior-aware cleanup.
 6. Data pipeline stages and artifacts do not have one declared source-to-runtime path.
 7. Several pipeline scripts use machine-specific absolute paths.
 
@@ -94,7 +94,7 @@ Two current behaviors also differ from the accepted experience:
 
 The current evidence supports this order:
 
-1. Establish deterministic type, lint, test, build, and data-validation commands.
+1. Finish the deterministic quality-gate effort by connecting the existing type, lint, test, build, and data-validation commands to one aggregate check and CI.
 2. Define and validate the runtime `Building` contract.
 3. Extract pure filter/query transformations with tests.
 4. Introduce a typed AMap adapter boundary and reduce responsibilities in `MapCanvas`.

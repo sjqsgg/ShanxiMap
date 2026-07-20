@@ -79,7 +79,7 @@ A source-backed annotation indicating a documented survey or visit by members of
 
 ### Runtime artifact
 
-`src/data/buildings.json`, the JSON bundled into the frontend build. It is currently loaded with a TypeScript assertion and has no runtime schema validation.
+`src/data/buildings.json`, the JSON bundled into the frontend build. The application currently loads it with a TypeScript assertion. A separate baseline validation command checks essential identity and map-display fields, but the complete runtime schema is not yet encoded or enforced at application load.
 
 ### Source
 

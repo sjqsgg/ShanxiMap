@@ -80,9 +80,9 @@ Before claiming a ticket complete:
 
 - acceptance criteria are mapped to evidence;
 - focused tests pass when present;
-- `npx tsc --noEmit` passes for TypeScript changes;
+- `npm run typecheck` passes for TypeScript changes;
 - `npm run build` passes for runtime/static-generation changes;
-- data validation passes for runtime data changes once available;
+- `npm run validate:data` passes for runtime data or validator changes;
 - the diff is reviewed against both `AGENTS.md` and the approved spec;
 - skipped checks and remaining risks are reported.
 

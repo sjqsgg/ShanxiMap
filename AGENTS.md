@@ -20,6 +20,8 @@ npm install
 npm run dev
 npm run lint
 npm run typecheck
+npm test
+npm run validate:data
 npm run build
 ```
 
@@ -62,7 +64,7 @@ For every implementation, report:
 - checks not run and why;
 - remaining risks or unknowns.
 
-At minimum, run `npm run typecheck` for TypeScript changes and `npm run build` for changes that affect runtime behavior or static generation. Add focused automated tests once the test runner exists.
+At minimum, run `npm run typecheck` for TypeScript changes and `npm run build` for changes that affect runtime behavior or static generation. Add focused automated tests at approved public seams, and run `npm run validate:data` whenever runtime data or its validation contract changes.
 
 ## Agent skills
 

@@ -60,7 +60,12 @@ The scripts also emit logs and keep `data/buildings-backup.json`. Network-derive
 
 ## Current promotion checks
 
-The repository has no single promotion command. Before replacing the runtime artifact, at minimum verify:
+`npm run validate:data` now automates baseline checks for collection shape,
+essential identity and map-display primitive types, unique IDs, finite
+coordinates, and visit tiers. It validates the committed runtime artifact; it
+does not promote a candidate or encode the complete contract.
+
+Before replacing the runtime artifact, also verify:
 
 - exactly 532 records unless a collection change is explicitly approved;
 - unique positive integer IDs;
@@ -70,7 +75,8 @@ The repository has no single promotion command. Before replacing the runtime art
 - image URLs and attribution fields when an image is present;
 - TypeScript and production build success.
 
-These checks are currently procedural documentation, not automated enforcement.
+The checks beyond the baseline validator remain procedural documentation, not
+automated enforcement.
 
 ## Target cleanup questions
 
