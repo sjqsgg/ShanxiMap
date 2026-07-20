@@ -79,12 +79,17 @@ Before implementation:
 Before claiming a ticket complete:
 
 - acceptance criteria are mapped to evidence;
+- `npm run check` passes as the standard local acceptance entry;
 - focused tests pass when present;
 - `npm run typecheck` passes for TypeScript changes;
 - `npm run build` passes for runtime/static-generation changes;
 - `npm run validate:data` passes for runtime data or validator changes;
 - the diff is reviewed against both `AGENTS.md` and the approved spec;
 - skipped checks and remaining risks are reported.
+
+GitHub repeats `npm run check` and `npm run build` in one read-only Node 20
+verification job for every push and pull request. CI does not deploy or replace
+the product/spec review described above.
 
 ## Durable updates
 

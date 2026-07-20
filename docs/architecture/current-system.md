@@ -85,7 +85,7 @@ Two current behaviors also differ from the accepted experience:
 1. `MapCanvas` combines SDK adaptation, persistence, marker presentation, selection events, and camera policy behind `any`-typed AMap objects.
 2. Homepage and `/map` duplicate filter and selection domain behavior with incompatible state shapes.
 3. The runtime dataset crosses into TypeScript through `as unknown as Building[]`; the new baseline validator is still separate from this application import boundary and does not encode the complete schema.
-4. A lightweight test runner and baseline data-validation command now exist, but the aggregate local check and GitHub CI gate are not yet connected.
+4. The repository has a fail-fast local acceptance command and a GitHub CI job covering lint, TypeScript, tests, baseline data validation, and production build; these gates do not replace product or visual review.
 5. The explicit ESLint command passes, but it still reports six known source warnings that require separate, behavior-aware cleanup.
 6. Data pipeline stages and artifacts do not have one declared source-to-runtime path.
 7. Several pipeline scripts use machine-specific absolute paths.
@@ -94,11 +94,10 @@ Two current behaviors also differ from the accepted experience:
 
 The current evidence supports this order:
 
-1. Finish the deterministic quality-gate effort by connecting the existing type, lint, test, build, and data-validation commands to one aggregate check and CI.
-2. Define and validate the runtime `Building` contract.
-3. Extract pure filter/query transformations with tests.
-4. Introduce a typed AMap adapter boundary and reduce responsibilities in `MapCanvas`.
-5. Reconcile homepage and dedicated-map interaction models deliberately.
-6. Define the data lifecycle and make pipeline entry points repeatable.
+1. Define and validate the runtime `Building` contract.
+2. Extract pure filter/query transformations with tests.
+3. Introduce a typed AMap adapter boundary and reduce responsibilities in `MapCanvas`.
+4. Reconcile homepage and dedicated-map interaction models deliberately.
+5. Define the data lifecycle and make pipeline entry points repeatable.
 
 Each item must be delivered as independently verifiable vertical slices rather than as one rewrite.

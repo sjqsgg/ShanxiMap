@@ -22,12 +22,17 @@ npm run lint
 npm run typecheck
 npm test
 npm run validate:data
+npm run check
 npm run build
 ```
 
 `npm run lint` reports the repository's current warnings as well as errors. Do
 not describe a warning-producing run as warning-free; include the warning count
 in verification evidence until those warnings are resolved separately.
+
+`npm run check` is the local acceptance entry. It runs lint, TypeScript,
+automated tests, and runtime-data validation in fail-fast order. The production
+build remains a separate integration check.
 
 ## Repository boundaries
 

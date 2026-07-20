@@ -1,16 +1,21 @@
-# 03 — Connect the local acceptance entry and GitHub CI
+# 03 — 接通本地验收入口和 GitHub CI
 
-**What to build:** The project owner can run one local acceptance command, and
-GitHub automatically repeats that command plus the production build in a clean,
-locked Node.js environment on every push and pull request.
+**要实现的内容：** 项目维护者可以用一条本地命令完成约定的工程验收；GitHub 在每次 push 和 pull request 时，自动在干净、依赖锁定的 Node.js 环境中重复该验收并执行生产构建。
 
-**Blocked by:** 01 — Establish non-interactive source checks; 02 — Establish the building data validation seam
+**前置任务：** 01 — 建立非交互式源码检查；02 — 建立建筑数据校验边界
 
-**Status:** ready-for-agent
+**状态：** complete
 
-- [ ] The aggregate check runs lint, TypeScript, automated tests, and runtime-data validation and fails when any leaf command fails.
-- [ ] Pushes and pull requests trigger one verification job using Node 20 and the committed dependency lockfile.
-- [ ] CI installs with `npm ci`, runs the aggregate check, and then runs the production build.
-- [ ] CI does not deploy, use project secrets, acquire or enrich data, or modify committed files.
-- [ ] The complete local aggregate check and production build pass before delivery.
-- [ ] A final manual minimal-diff review finds no avoidable dependency, duplicated configuration, speculative abstraction, or unrelated changed file.
+- [x] 聚合检查依次运行 ESLint、TypeScript、自动化测试和运行时数据校验；任一子命令失败时整体失败。
+- [x] push 和 pull request 触发一个使用 Node 20 与已提交依赖锁文件的验证 job。
+- [x] CI 使用 `npm ci` 安装依赖，随后运行聚合检查和生产构建。
+- [x] CI 不部署、不使用项目 secrets、不采集或丰富数据，也不修改已提交文件。
+- [x] 交付前，本地聚合检查与生产构建均通过。
+- [x] 最终最小差异审查没有发现可避免的依赖、重复配置、推测性抽象或无关文件变更。
+
+## 验收证据
+
+- `npm run check`：通过；ESLint 为 0 errors、6 个既有 warnings，TypeScript 通过，8 项测试通过，532 条运行时建筑记录通过校验。
+- `npm run build`：通过；成功生成 537 个静态页面。
+- `.github/workflows/ci.yml`：每次 push 和 pull request 使用 Node 20 运行 `npm ci`、`npm run check`、`npm run build`；只有 `contents: read` 权限。
+- GitHub Actions 的线上结果以本 Ticket 交付提交关联的 `CI / verify` check 为准；交付前由执行者确认通过。
