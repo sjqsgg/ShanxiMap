@@ -6,7 +6,10 @@ import { archiveNo } from "@/lib/types";
 import SiteActions from "@/components/site/SiteActions";
 import { CheckinButtons, NotesBox } from "@/components/site/SitePlaceholders";
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
+  if (process.env.NODE_ENV === "development") return [];
   return BUILDINGS.map((b) => ({ id: String(b.id) }));
 }
 
@@ -32,13 +35,13 @@ function Rule() {
   return <div className="dotted-rule my-10 h-px w-full" />;
 }
 
-/** 实用信息：暂无数据的字段显示 — */
-const PRACTICAL: { label: string; value?: string }[] = [
-  { label: "开放时间" },
-  { label: "票价" },
-  { label: "交通方式" },
-  { label: "停车" },
-];
+function practicalItems(b: ReturnType<typeof byId>) {
+  if (!b) return [];
+  const items: { label: string; value: string }[] = [];
+  if (b.tel) items.push({ label: "电话", value: b.tel });
+  if (b.rating && b.rating !== "0") items.push({ label: "评分", value: `${b.rating} / 5.0` });
+  return items;
+}
 
 export default async function SitePage({
   params,
@@ -78,14 +81,33 @@ export default async function SitePage({
         </div>
       </nav>
 
-      {/* 大图区（占位，等真实照片） */}
-      <div className="relative mt-[41px] flex h-[50vh] items-center justify-center border-b border-line bg-paper-deep">
-        <h1 className="px-6 text-center font-serif text-4xl font-bold text-ink sm:text-6xl">
-          {b.name}
-        </h1>
-        <span className="absolute bottom-3 right-4 font-mono text-[10px] tracking-wider text-ink-faint">
-          [ 建筑实景照片 · 待补 ]
-        </span>
+      {/* 大图区 */}
+      <div className="relative mt-[41px] flex h-[50vh] items-center justify-center border-b border-line bg-paper-deep overflow-hidden">
+        {b.image ? (
+          <>
+            <img
+              src={b.image.thumb || b.image.url}
+              alt={b.name}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-paper-deep/90 via-paper-deep/30 to-paper-deep/10" />
+            <h1 className="relative px-6 text-center font-serif text-4xl font-bold text-ink drop-shadow-sm sm:text-6xl">
+              {b.name}
+            </h1>
+            <span className="absolute bottom-3 right-4 font-mono text-[9px] text-ink-faint/70">
+              {b.image.license} · Wikimedia Commons
+            </span>
+          </>
+        ) : (
+          <>
+            <h1 className="px-6 text-center font-serif text-4xl font-bold text-ink sm:text-6xl">
+              {b.name}
+            </h1>
+            <span className="absolute bottom-3 right-4 font-mono text-[10px] tracking-wider text-ink-faint">
+              [ 建筑实景照片 · 待补 ]
+            </span>
+          </>
+        )}
       </div>
 
       <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
@@ -108,7 +130,7 @@ export default async function SitePage({
         </div>
 
         <p className="mt-4 font-mono text-sm text-ink-soft">
-          {b.dynasty} · {b.city} · {b.county} · {b.type}
+          {[b.dynasty, b.city, b.county, b.type].filter(Boolean).join(" · ")}
         </p>
 
         {b.yingzao && (
@@ -128,28 +150,57 @@ export default async function SitePage({
         <p className="font-serif text-base leading-loose text-ink">
           {b.description || "简介待补。"}
         </p>
-        <p className="mt-3 font-mono text-[10px] text-ink-faint">
-          位于{b.address}
-          {b.geo_precision !== "high" &&
-            ` · ⚠ 坐标为${b.geo_precision === "county" ? "区县" : "村镇"}级近似，实地前请再核实`}
-        </p>
+        {b.desc_source === "template" && (
+          <p className="mt-2 font-mono text-[10px] text-ink-faint">
+            ※ 简介为自动生成摘要，详细资料收集中
+          </p>
+        )}
+        {b.desc_source !== "template" && (
+          <p className="mt-3 font-mono text-[10px] text-ink-faint">
+            位于{b.address}
+            {b.geo_precision !== "high" &&
+              ` · ⚠ 坐标为${b.geo_precision === "county" ? "区县" : "村镇"}级近似，实地前请再核实`}
+          </p>
+        )}
+        {b.desc_source === "template" && b.geo_precision !== "high" && (
+          <p className="mt-1 font-mono text-[10px] text-ochre">
+            ⚠ 坐标为{b.geo_precision === "county" ? "区县" : "村镇"}级近似，实地前请再核实
+          </p>
+        )}
 
         <Rule />
 
         {/* 实用信息 */}
-        <SectionTitle>实用信息</SectionTitle>
-        <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-6">
-          {PRACTICAL.map((item) => (
-            <div key={item.label}>
-              <p className="font-mono text-[11px] tracking-widest text-ink-faint">
-                {item.label}
-              </p>
-              <p className="mt-1 font-serif text-sm text-ink">
-                {item.value ?? "—"}
-              </p>
-            </div>
-          ))}
-        </div>
+        {(practicalItems(b).length > 0 || b.wiki_url) && (
+          <>
+            <SectionTitle>实用信息</SectionTitle>
+            {practicalItems(b).length > 0 && (
+              <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-6">
+                {practicalItems(b).map((item) => (
+                  <div key={item.label}>
+                    <p className="font-mono text-[11px] tracking-widest text-ink-faint">
+                      {item.label}
+                    </p>
+                    <p className="mt-1 font-serif text-sm text-ink">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {b.wiki_url && (
+              <a
+                href={b.wiki_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-block font-mono text-[11px] text-ink-soft underline underline-offset-4 transition-colors hover:text-cinnabar"
+              >
+                维基百科条目 →
+              </a>
+            )}
+          </>
+        )}
 
         <div className="mt-8">
           <SiteActions b={b} />
@@ -173,8 +224,7 @@ export default async function SitePage({
                   {n.earliest_dynasty}
                 </span>
                 <span className="hidden shrink-0 font-mono text-[11px] text-ink-faint sm:inline">
-                  {n.city}
-                  {n.county}
+                  {[n.city, n.county].filter(Boolean).join("")}
                 </span>
                 <span className="w-16 shrink-0 text-right font-mono text-[11px] text-ink-soft">
                   约{km < 1 ? km.toFixed(1) : Math.round(km)}km

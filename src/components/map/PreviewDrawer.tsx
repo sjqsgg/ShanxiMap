@@ -82,14 +82,30 @@ export default function PreviewDrawer({
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {/* 缩略图占位（16:9） */}
-            <div className="relative flex aspect-video items-center justify-center border-b border-line bg-paper-deep">
-              <span className="font-serif text-lg text-ink-faint">
-                {building.name}
-              </span>
-              <span className="absolute bottom-2 right-3 font-mono text-[9px] tracking-wider text-ink-faint">
-                [ 影像待补 ]
-              </span>
+            {/* 缩略图 */}
+            <div className="relative flex aspect-video items-center justify-center border-b border-line bg-paper-deep overflow-hidden">
+              {building.image ? (
+                <>
+                  <img
+                    src={building.image.thumb || building.image.url}
+                    alt={building.name}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-paper-deep/60 to-transparent" />
+                  <span className="relative font-serif text-lg font-bold text-paper drop-shadow-md">
+                    {building.name}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="font-serif text-lg text-ink-faint">
+                    {building.name}
+                  </span>
+                  <span className="absolute bottom-2 right-3 font-mono text-[9px] tracking-wider text-ink-faint">
+                    [ 影像待补 ]
+                  </span>
+                </>
+              )}
             </div>
 
             <div className="px-4 py-3">
@@ -112,8 +128,7 @@ export default function PreviewDrawer({
               </div>
 
               <p className="mt-2 font-mono text-[11px] text-ink-soft">
-                {building.dynasty} · {building.city}
-                {building.county} · {building.type}
+                {[building.dynasty, building.city, building.county, building.type].filter(Boolean).join(" · ")}
               </p>
 
               {building.yingzao && (
@@ -123,13 +138,44 @@ export default function PreviewDrawer({
               )}
 
               {building.description && (
-                <div className="relative mt-4 border-t border-dashed border-line pt-3">
-                  <p className="max-h-[6.4em] overflow-hidden font-serif text-[13.5px] leading-relaxed text-ink-soft">
+                <div className="mt-4 border-t border-dashed border-line pt-3">
+                  <p className="font-serif text-[13.5px] leading-relaxed text-ink-soft">
                     {building.description}
                   </p>
-                  {/* 渐变遮罩截断，不用省略号 */}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-paper to-transparent" />
+                  {building.desc_source === "template" && (
+                    <p className="mt-1 font-mono text-[9px] text-ink-faint">
+                      ※ 自动生成摘要，详细资料收集中
+                    </p>
+                  )}
                 </div>
+              )}
+
+              {(building.tel || (building.rating && building.rating !== "0")) && (
+                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+                  {building.tel && (
+                    <div>
+                      <p className="font-mono text-[10px] tracking-wider text-ink-faint">电话</p>
+                      <p className="mt-0.5 font-mono text-[12px] text-ink">{building.tel}</p>
+                    </div>
+                  )}
+                  {building.rating && building.rating !== "0" && (
+                    <div>
+                      <p className="font-mono text-[10px] tracking-wider text-ink-faint">评分</p>
+                      <p className="mt-0.5 font-mono text-[12px] text-ink">{building.rating} / 5.0</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {building.wiki_url && (
+                <a
+                  href={building.wiki_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-block font-mono text-[11px] text-ink-soft underline underline-offset-4 transition-colors hover:text-cinnabar"
+                >
+                  维基百科条目 →
+                </a>
               )}
 
               {building.geo_precision !== "high" && (

@@ -17,10 +17,21 @@ export type Building = {
   lat: number;
   lng: number;
   description: string;
-  desc_source?: "manual" | "template";
-  geo_precision?: "high" | "approx" | "county";
+  desc_source?: "manual" | "template" | "wiki";
+  geo_precision?: "high" | "approx" | "county" | "amap";
+  geo_source?: string;
+  is_open?: boolean | null;
   yingzao?: string;
   yingzao_source?: string;
+  tel?: string;
+  rating?: string;
+  wiki_url?: string;
+  image?: {
+    url: string;
+    thumb: string;
+    license: string;
+    artist: string;
+  };
 };
 
 export const TIER_COLOR: Record<Tier, string> = {

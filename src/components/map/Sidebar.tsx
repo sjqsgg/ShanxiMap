@@ -49,8 +49,8 @@ export default function Sidebar({
                   )}
                 </span>
                 <span className="block font-mono text-[10px] text-ink-faint">
-                  {b.earliest_dynasty} · {b.city}
-                  {b.county} · {archiveNo(b.id)}
+                  {[b.earliest_dynasty, b.city, b.county].filter(Boolean).join(" · ")}{" "}
+                  · {archiveNo(b.id)}
                 </span>
               </span>
             </button>
