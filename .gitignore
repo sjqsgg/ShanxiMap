@@ -14,3 +14,10 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 .vercel
+
+# planning-with-files working memory
+/task_plan.md
+/findings.md
+/progress.md
+/.plan-attestation
+.planning/

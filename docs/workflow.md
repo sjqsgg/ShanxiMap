@@ -35,6 +35,8 @@ The user reviews the spec before tickets, and reviews each independently committ
 
 When an approved effort spans many tool calls, phases, or conversations, add planning-with-files working memory after the spec and tickets exist. Planning files track execution; they do not replace the approved spec or permanent project documentation.
 
+Use the repository's standard, advisory configuration described in `docs/agents/planning-with-files.md`. Autonomous mode, gated mode, and unattended execution loops require a separate user decision and are not part of this workflow.
+
 ## Skill responsibilities
 
 | Skill | Use it for | Do not use it for |
@@ -48,6 +50,7 @@ When an approved effort spans many tool calls, phases, or conversations, add pla
 | `codebase-design` | Design deep modules with small interfaces and testable seams. | Abstracting solely to reduce file length. |
 | `improve-codebase-architecture` | Identify and discuss high-leverage structural improvements. | Automatically rewriting every candidate it finds. |
 | `code-review` | Review both documented standards and originating spec. | Replacing deterministic type, test, lint, data, or build checks. |
+| `planning-with-files` | Preserve temporary findings, progress, and the current phase during a long approved effort. | Defining requirements, changing accepted decisions, or acting as durable project documentation. |
 
 ## ShanxiMap refactoring order
 

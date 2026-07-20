@@ -33,6 +33,7 @@ npm run build
 - `scripts/` owns data acquisition, enrichment, transformation, and validation scripts.
 - `data/` currently contains pipeline checkpoints, reports, logs, backups, and intermediate results. Read `docs/data/pipeline.md` before moving or regenerating them.
 - `.scratch/` is the local issue tracker used by the installed engineering skills.
+- `.planning/` is ignored, disposable execution memory for long-running tasks; it never replaces a reviewed spec, ticket, ADR, or fact document.
 
 Do not combine product UI refactors with data regeneration in one change. Prefer small vertical slices that can be verified independently.
 
@@ -40,6 +41,7 @@ Do not combine product UI refactors with data regeneration in one change. Prefer
 
 - Preserve existing user changes. Never discard, overwrite, or mass-format unrelated work.
 - For a non-trivial feature or refactor, create `.scratch/<feature>/spec.md` before implementation and split work into `.scratch/<feature>/issues/NN-<slug>.md`.
+- After the spec and tickets are approved, use standard-mode `planning-with-files` when execution spans several phases or many tool calls. See `docs/agents/planning-with-files.md`.
 - Clarify behavior and acceptance criteria before changing code. Distinguish facts, inferences, open questions, and user decisions.
 - Reuse the vocabulary in `CONTEXT.md`; update it only when a domain term has actually been resolved.
 - Record durable architectural or product decisions in `docs/adr/`. Do not turn temporary task progress into permanent documentation.
@@ -61,7 +63,7 @@ At minimum, run `npx tsc --noEmit` for TypeScript changes and `npm run build` fo
 
 ## Agent skills
 
-The repository vendors 12 workflow skills under `.codex/skills/`. The inventory, upstream commit, and licence are recorded in `.codex/skills/README.md`.
+The repository vendors 13 workflow skills under `.codex/skills/`. The inventory, upstream commits, and licences are recorded in `.codex/skills/README.md`.
 
 User-facing workflow skills:
 
@@ -81,6 +83,10 @@ Supporting skills invoked by those workflows when relevant:
 - `codebase-design`
 - `code-review`
 
+Long-running execution support:
+
+- `planning-with-files` (standard, advisory mode only)
+
 The two sections below configure how those skills use this repository; they are not the complete skill inventory.
 
 ### Issue tracker
@@ -90,3 +96,7 @@ Issues and specs live as local Markdown under `.scratch/`. See `docs/agents/issu
 ### Domain docs
 
 This is a single-context repository with `CONTEXT.md` at the root and system-wide decisions in `docs/adr/`. See `docs/agents/domain.md`.
+
+### Execution memory
+
+Complex approved efforts may use ignored plan files under `.planning/`. See `docs/agents/planning-with-files.md`.
