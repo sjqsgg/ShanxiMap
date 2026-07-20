@@ -1,43 +1,45 @@
 # 山西访古档案
 
-山西省古建筑访古地图。532 处全国重点文物保护单位（第一至八批）按「档案」方式归档：
-档案馆滚动叙事首页 + 全屏高德访古地图。为深入山西的访古旅行者而作，不蹭任何 IP。
+山西省全国重点文物保护单位的静态访古地图。项目以“国保档案馆”为视觉与信息隐喻，提供叙事首页、全屏地图和 532 个独立档案页。
 
-## 功能
+## 当前功能
 
-- **首页 `/`**：档案封面 → 21 张「必去」卷宗滚动滑出 → 磨砂过渡进入地图
-- **地图 `/map`**：纸色底图，必去/推荐/小众三级点位，营造学社「测」字徽记，
-  档案卡弹窗（简介、批次、坐标复制、高德导航），朝代/地市/等级/类型/营造学社筛选，
-  搜索与列表联动；URL 携带筛选与选中状态，可直接分享（如 `/map?id=6`）
-- **营造学社专题**：16 处梁思成/林徽因考察建筑，标注仅依据一手文献
-  （《大同古建筑调查报告》1933、《云冈石窟中所表现的北魏建筑》1933、
-  《晋汾古建筑预查纪略》1935、《记五台山佛光寺的建筑》1944 等）
+- `/`：档案馆首页、馆藏统计、档案袋过渡、嵌入式地图、单选筛选和地市索引。
+- `/map`：高德全屏地图、搜索、多选筛选、列表、预览抽屉和可分享筛选条件。
+- `/site/[id]`：完整档案、图片与来源、实用信息、导航和附近古建。
+
+当前数据包括 532 个唯一档案及坐标；简介来源为 70 条 manual、379 条 wiki、83 条 template。更完整的数据字段和覆盖情况见 [`docs/data/dictionary.md`](docs/data/dictionary.md)。
 
 ## 本地开发
 
 ```bash
-cp .env.example .env.local   # 填入高德 Web端(JS API) key 与安全密钥
+cp .env.example .env.local
 npm install
 npm run dev
 ```
 
-## 部署（Vercel）
+`.env.local` 需要填写高德 Web 端 JS API key 与安全密钥。生产域名应在高德控制台配置白名单。
 
-1. 推送本仓库到 GitHub，Vercel 导入
-2. 环境变量：`NEXT_PUBLIC_AMAP_KEY`、`NEXT_PUBLIC_AMAP_SECRET`
-3. **上线后务必**在高德控制台给 JS API key 配置域名白名单（key 会随前端代码公开）
+验证当前生产构建：
 
-## 数据
+```bash
+npx tsc --noEmit
+npm run build
+```
 
-- `src/data/buildings.json`：前端唯一数据源（= `shanxi_guobao_final.json`）
-- 坐标系 GCJ-02；精度 `geo_precision`: high 449 / approx 51 / county 32
-- `geo_review.csv`：待人工精化的坐标清单
-- 简介：必去+推荐 70 条手写（`desc_source: manual`），其余模板生成（`template`），
-  可增量补写后重跑 `scripts/03_descriptions.py`
-- 数据管线：`scripts/01_yingzao.py` → `02_geocode.py`（需 `AMAP_WEB_KEY` 环境变量）
-  → `02b_geocode_retry.py` → `03_descriptions.py`
+`npm run lint` 目前仍是失效的 `next lint` 脚本，尚不能作为验证命令。
+
+## 项目文档
+
+- [`AGENTS.md`](AGENTS.md)：代理和贡献工作规则。
+- [`CONTEXT.md`](CONTEXT.md)：产品、数据和工程术语。
+- [`docs/product/product.md`](docs/product/product.md)：产品目标、原则和非目标。
+- [`docs/architecture/current-system.md`](docs/architecture/current-system.md)：当前架构及已确认风险。
+- [`docs/data/dictionary.md`](docs/data/dictionary.md)：前端运行时数据字典。
+- [`docs/data/pipeline.md`](docs/data/pipeline.md)：现有数据流水线与产物分类。
+- [`docs/workflow.md`](docs/workflow.md)：规格、任务切片、实现和审核流程。
+- [`docs/adr/`](docs/adr/)：长期决策记录。
 
 ## 技术栈
 
-Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 + 高德 JS API 2.0。
-纯静态构建，零后端；社区/账号/数据库可后续以 API Routes + 数据库直接扩展。
+Next.js 15 App Router、React 19、TypeScript、Tailwind CSS 4、Framer Motion、高德 JS API 2.0。应用当前为静态构建，无后端和数据库。
