@@ -45,7 +45,8 @@ The accepted first-release visit-state model is private rather than aggregate: g
 
 - `src/lib/types.ts`: TypeScript data shape, enums, grouping constants, and archive-number formatting.
 - `src/lib/data.ts`: imports the runtime JSON, asserts it to `Building[]`, derives statistics, chronology-first city grouping, distance, and nearby-site results.
-- The application import boundary still asserts JSON as TypeScript without validation. A separate baseline command validates essential collection fields, but it is not yet the complete runtime schema or part of application loading.
+- `src/lib/validate-buildings.ts`: the pure complete runtime contract. It accepts `unknown`, returns trusted `Building[]` only after all checks pass, and otherwise returns deterministic, locatable issues.
+- The application import boundary still asserts JSON as TypeScript without calling the complete validator. `npm run validate:data` and its CLI use the validator, but application-load enforcement remains a separate next slice.
 
 ### Data tooling
 
@@ -84,8 +85,8 @@ Two current behaviors also differ from the accepted experience:
 
 1. `MapCanvas` combines SDK adaptation, persistence, marker presentation, selection events, and camera policy behind `any`-typed AMap objects.
 2. Homepage and `/map` duplicate filter and selection domain behavior with incompatible state shapes.
-3. The runtime dataset crosses into TypeScript through `as unknown as Building[]`; the new baseline validator is still separate from this application import boundary and does not encode the complete schema.
-4. The repository has a fail-fast local acceptance command and a GitHub CI job covering lint, TypeScript, tests, baseline data validation, and production build; these gates do not replace product or visual review.
+3. The runtime dataset crosses into TypeScript through `as unknown as Building[]`; the complete validator exists but is still separate from this application import boundary.
+4. The repository has a fail-fast local acceptance command and a GitHub CI job covering lint, TypeScript, tests, complete runtime-data validation, and production build; these gates do not replace product or visual review.
 5. The explicit ESLint command passes, but it still reports six known source warnings that require separate, behavior-aware cleanup.
 6. Data pipeline stages and artifacts do not have one declared source-to-runtime path.
 7. Several pipeline scripts use machine-specific absolute paths.

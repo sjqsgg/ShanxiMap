@@ -25,6 +25,9 @@ function building(
     lat: 37.8,
     lng: 112.5,
     description: "测试地点档案",
+    desc_source: "manual",
+    geo_precision: "high",
+    geo_source: "测试坐标",
   };
 }
 

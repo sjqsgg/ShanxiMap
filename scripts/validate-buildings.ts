@@ -3,7 +3,9 @@ import path from "node:path";
 
 import { validateBuildings } from "../src/lib/validate-buildings";
 
-const runtimeDataPath = path.resolve("src/data/buildings.json");
+const runtimeDataPath = path.resolve(
+  process.argv[2] ?? "src/data/buildings.json",
+);
 
 let input: unknown;
 try {

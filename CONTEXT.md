@@ -76,7 +76,7 @@ A source-backed annotation indicating a documented survey or visit by members of
 
 ### Runtime artifact
 
-`src/data/buildings.json`, the JSON bundled into the frontend build. The application currently loads it with a TypeScript assertion. A separate baseline validation command checks essential identity and map-display fields, but the complete runtime schema is not yet encoded or enforced at application load.
+`src/data/buildings.json`, the JSON bundled into the frontend build. The pure `validateBuildings(unknown)` boundary encodes the complete runtime schema, and `npm run validate:data` applies it to the committed artifact. The application still loads the JSON with a TypeScript assertion instead of calling that boundary; application-load enforcement is the next contract slice.
 
 The current 532-record collection is an initial runtime release, not the fixed final dataset. Its contract protects record shape and domain invariants; it must not freeze the current record count, require contiguous identifiers, or treat current coverage statistics as permanent requirements.
 
@@ -111,7 +111,7 @@ A human-readable list of uncertain matches, missing enrichment, or proposed chan
 
 All frontend coordinates are expected to align with the GCJ-02 coordinate system used by AMap.
 
-Runtime coordinates must also fall within a deliberately broad Shanxi geographic envelope. This is a hard guard against swapped coordinates and obvious out-of-province drift, not proof that a coordinate is precise or correctly sourced; `geo_precision`, provenance, and human review retain those responsibilities.
+Runtime coordinates must also fall within a deliberately broad Shanxi geographic envelope: longitude 110.23–114.56 and latitude 34.58–40.74, inclusive. This is a hard guard against swapped coordinates and obvious out-of-province drift, not proof that a coordinate is precise or correctly sourced; `geo_precision`, provenance, and human review retain those responsibilities.
 
 ## Engineering language
 

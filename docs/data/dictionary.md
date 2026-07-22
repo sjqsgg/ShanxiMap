@@ -2,7 +2,7 @@
 
 Status: `src/data/buildings.json` at 2026-07-22
 
-The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. `npm run validate:data` checks the collection shape, essential identity and map-display primitive types, unique IDs, and finite coordinates through a deterministic baseline validator.
+The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. The pure `validateBuildings(unknown)` boundary checks the complete runtime record shape and returns trusted `Building[]` only when every record passes; `npm run validate:data` applies that same boundary to the committed artifact.
 
 ## Identity and classification
 
@@ -32,18 +32,18 @@ The runtime artifact contains 532 objects. The TypeScript declaration is `Buildi
 |---|---|---|
 | `lat` | number | Latitude expected to align with AMap's GCJ-02 display. |
 | `lng` | number | Longitude expected to align with AMap's GCJ-02 display. |
-| `geo_precision` | optional enum | Project confidence/source class: `high`, `amap`, `approx`, or `county`. |
-| `geo_source` | optional string | Free-form provenance for the coordinate. |
+| `geo_precision` | enum | Required project confidence/source class: `high`, `amap`, `approx`, or `county`. |
+| `geo_source` | string | Required, non-empty free-form provenance for the coordinate. |
 
-Current precision counts: 449 high, 23 amap, 32 approx, 28 county. Precision labels are project metadata, not measured error guarantees.
+Coordinates must fall within the inclusive broad envelope longitude 110.23–114.56 and latitude 34.58–40.74. Current precision counts are 449 high, 23 amap, 32 approx, and 28 county. Both the envelope and precision labels are guards/metadata, not measured accuracy guarantees.
 
 ## Description and research enrichment
 
 | Field | Type | Meaning |
 |---|---|---|
 | `description` | string | User-facing summary. |
-| `desc_source` | optional enum | `manual`, `wiki`, or `template`. |
-| `wiki_url` | optional string | Related Wikipedia page used as a reference/enrichment link. |
+| `desc_source` | enum | Required value: `manual`, `wiki`, or `template`. |
+| `wiki_url` | optional HTTP(S) URL | Related Wikipedia page used as a reference/enrichment link. |
 | `yingzao` | optional string | Documented Yingzao Society relationship such as survey or visit. |
 | `yingzao_source` | optional string | Citation label supporting `yingzao`. |
 
@@ -55,21 +55,22 @@ Current description counts: 70 manual, 379 wiki, 83 template. There are 16 Yingz
 |---|---|---|
 | `is_open` | optional boolean or null | Retrieved opening-state signal. It is not currently presented as a guaranteed live status. |
 | `tel` | optional string | Retrieved telephone information. |
-| `rating` | optional string | Retrieved rating. String `"0"` is treated as absent by the UI. |
+| `rating` | optional string or empty array | Transitional compatibility only: 358 records use strings and 26 use `[]`; the final practical-information schema is deferred. |
 | `image` | optional object | Wikimedia image metadata. |
-| `image.url` | string | Source image URL. |
-| `image.thumb` | string | Thumbnail URL preferred by the UI. |
-| `image.license` | string | License label displayed with the image. |
-| `image.artist` | string | Creator/attribution text retained in data. |
+| `image.url` | HTTP(S) URL | Required source image URL when `image` exists. |
+| `image.thumb` | HTTP(S) URL | Required thumbnail URL when `image` exists. |
+| `image.license` | non-empty string | Required license label when `image` exists. |
+| `image.artist` | non-empty string | Required creator/attribution when `image` exists. |
 
-Current enrichment coverage: 144 images, 102 telephone values, and 384 non-zero ratings.
+Current enrichment coverage: 144 images, 102 telephone values, 358 string ratings, and 26 transitional empty-array ratings.
 
-## Contract gaps
+## Contract enforcement and remaining boundary
 
-- Optionality in TypeScript has not been checked against every JSON value at runtime.
-- Free-form `type`, `yingzao`, provenance, URLs, and string ratings need exact validation rules beyond the current broad primitive checks.
-- Cross-field rules are not enforced, such as requiring `yingzao_source` when `yingzao` is present.
-- Positive-integer ID rules, geographic coordinate ranges, complete supported enums, and image attribution are not yet checked.
-- The baseline validator is a separate command; the application still loads the JSON through a TypeScript assertion, and `npm run build` does not invoke the command directly.
+- Runtime records and nested image objects reject unknown fields. Source and intermediate schemas are not constrained by this frontend contract.
+- IDs are unique positive integers but need not be contiguous; the collection must be a non-empty array but is not fixed at 532 records.
+- City, heritage type, description source, and coordinate precision are strict enums. Display and source text such as dynasty, address, county, batch number, and `geo_source` remains open.
+- `yingzao` and `yingzao_source` must be absent together, empty together, or non-empty together.
+- The CLI can validate the committed artifact or an explicit candidate path and exits non-zero after reporting every issue.
+- The application still loads JSON through a TypeScript assertion. Calling the same validator at application load, so invalid data also directly blocks development and production builds, is the next contract ticket.
 
-The later complete-contract effort should extend the same validator seam with these rules before the pipeline is reorganised.
+Adding, removing, or changing a runtime field requires one reviewed migration across data, type, validator, tests, consumers, and this dictionary.

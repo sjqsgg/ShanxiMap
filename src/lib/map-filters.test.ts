@@ -8,7 +8,7 @@ import {
   serializeMapFilters,
 } from "./map-filters";
 
-function building(id: number, type = "古建筑"): Building {
+function building(id: number, type: Building["type"] = "古建筑"): Building {
   return {
     id,
     name: `地点 ${id}`,
@@ -25,6 +25,9 @@ function building(id: number, type = "古建筑"): Building {
     lat: 37.8,
     lng: 112.5,
     description: "测试地点档案",
+    desc_source: "manual",
+    geo_precision: "high",
+    geo_source: "测试坐标",
   };
 }
 

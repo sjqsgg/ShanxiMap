@@ -60,23 +60,19 @@ The scripts also emit logs and keep `data/buildings-backup.json`. Network-derive
 
 ## Current promotion checks
 
-`npm run validate:data` now automates baseline checks for collection shape,
-essential identity and map-display primitive types, unique IDs, finite
-coordinates. It validates the committed runtime artifact; it
-does not promote a candidate or encode the complete contract.
+`npm run validate:data` applies the complete `validateBuildings(unknown)`
+contract to the committed runtime artifact. The CLI also accepts an explicit
+candidate path (`tsx scripts/validate-buildings.ts <path>`) for review before
+promotion. It rejects invalid collection shape, fields, primitives, enums,
+identifiers, coordinates, URLs, images, and cross-field provenance with
+locatable issues and a non-zero exit code.
 
-Before replacing the runtime artifact, also verify:
-
-- an explicitly reviewed collection change when the record count differs from the current 532; record count itself is not a permanent contract;
-- unique positive integer IDs;
-- finite coordinates within the expected Shanxi area;
-- supported type, description-source, and precision values;
-- cross-field provenance rules;
-- image URLs and attribution fields when an image is present;
-- TypeScript and production build success.
-
-The checks beyond the baseline validator remain procedural documentation, not
-automated enforcement.
+The contract does not freeze the current 532-record count or require contiguous
+IDs. A collection-size change and cross-release ID retirement/reuse still need
+explicit human review because a single candidate cannot prove historical
+identity. TypeScript and the production build also remain required before
+promotion. The CLI validates a candidate; it does not promote or overwrite the
+runtime artifact.
 
 Legacy source and intermediate artifacts may still carry the retired `tier` field because their schemas are not the frontend runtime contract. Promotion scripts must drop it rather than copying it into `src/data/buildings.json`; enrichment and image reports no longer organise records by that field.
 

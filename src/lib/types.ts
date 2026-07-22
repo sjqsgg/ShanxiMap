@@ -5,23 +5,23 @@ export type Building = {
   earliest_dynasty: string;
   dynasty_sort: number;
   address: string;
-  city: string;
+  city: (typeof CITIES)[number];
   county: string;
-  type: string;
+  type: (typeof HERITAGE_TYPES)[number];
   batch: string;
   batch_no: string;
   year: number;
   lat: number;
   lng: number;
   description: string;
-  desc_source?: "manual" | "template" | "wiki";
-  geo_precision?: "high" | "approx" | "county" | "amap";
-  geo_source?: string;
+  desc_source: (typeof DESCRIPTION_SOURCES)[number];
+  geo_precision: (typeof GEO_PRECISIONS)[number];
+  geo_source: string;
   is_open?: boolean | null;
   yingzao?: string;
   yingzao_source?: string;
   tel?: string;
-  rating?: string;
+  rating?: string | [];
   wiki_url?: string;
   image?: {
     url: string;
@@ -87,6 +87,12 @@ export const TYPE_GROUPS = [
   "古墓葬",
   "近现代/革命史迹",
 ] as const;
+
+export const HERITAGE_TYPES = [...TYPE_GROUPS, "其他"] as const;
+
+export const DESCRIPTION_SOURCES = ["manual", "wiki", "template"] as const;
+
+export const GEO_PRECISIONS = ["high", "amap", "approx", "county"] as const;
 
 /** 地图默认显示的类型 */
 export const DEFAULT_TYPES = new Set(["古建筑", "石窟寺及石刻", "其他"]);
