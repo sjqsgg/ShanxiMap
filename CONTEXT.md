@@ -10,7 +10,7 @@ The product as a whole. It presents Shanxi's nationally protected heritage sites
 
 ### Site archive / 地点档案
 
-The product's data and presentation unit for one heritage site. A site archive has a stable numeric `id`, protection batch metadata, location, chronology, classification, coordinates, description, and optional enrichment. Use “地点档案” when the distinction from a page or the collection matters.
+The product's data and presentation unit for one heritage site. A site archive has a stable numeric `id`, protection batch metadata, location, chronology, classification, coordinates, description, and optional enrichment. The `id` is the archive's identity across runtime-data releases, not an array position: surviving archives are not renumbered when records are added, removed, reordered, or edited, and a retired ID is not reused for a different site. Use “地点档案” when the distinction from a page or the collection matters.
 
 ### Homepage / 首页
 
@@ -19,6 +19,12 @@ The primary experience at `/`. It begins with the archive-themed introduction an
 ### Map explorer / 地图探索器
 
 The shared product experience for discovering site archives through a map: filtering, searching, selecting, previewing, and opening an archive detail. It does not plan routes or provide navigation; navigation is handed off to AMap when the user explicitly requests it.
+
+The explorer is a Shanxi-first thematic map rather than a nationwide basemap constrained by a rectangular viewport. Its default overview makes the complete Shanxi province the visual subject, while continuous zoom reveals prefecture-level cities and then county/district context. Neighbouring provinces may remain as subdued geographic context but must not compete with Shanxi.
+
+All site archives have equal editorial status on the map. Marker prominence may change because of zoom, label collision, selection, or factual classification, but it must not encode a recommendation ranking or imply that one protected site has less value than another.
+
+At the province overview, a small set of names may remain visible as cartographic orientation labels while all site markers keep the same base visual weight. This label policy belongs to responsive map presentation, not to the site archive's factual data; it must not be encoded as a permanent `famous`, `featured`, or recommendation field. Special marker badges are reserved for source-backed factual attributes.
 
 The explorer appears in two presentation modes: revealed inside the homepage after the archive-bag narrative, and opened directly as a full-screen view.
 
@@ -62,15 +68,6 @@ A personal marker of current intent to visit or revisit a heritage site. It is i
 
 One of the 532 records in the current collection of Shanxi entries from the first through eighth batches of 全国重点文物保护单位. Use “heritage site” or “site archive” in engineering prose; avoid introducing synonymous entity names such as attraction or venue.
 
-### Visit tier / 访古等级
-
-An editorial discovery priority, not an official government rating:
-
-- `必去`: primary highlights;
-- `推荐`: strongly recommended sites;
-- `小众`: specialist or less-known destinations;
-- `可选`: records outside the default map focus.
-
 ### Yingzao Society footprint / 营造学社足迹
 
 A source-backed annotation indicating a documented survey or visit by members of the Society for Research in Chinese Architecture. The presence of the annotation must be supported by `yingzao_source`; absence does not prove the site was never visited.
@@ -80,6 +77,8 @@ A source-backed annotation indicating a documented survey or visit by members of
 ### Runtime artifact
 
 `src/data/buildings.json`, the JSON bundled into the frontend build. The application currently loads it with a TypeScript assertion. A separate baseline validation command checks essential identity and map-display fields, but the complete runtime schema is not yet encoded or enforced at application load.
+
+The current 532-record collection is an initial runtime release, not the fixed final dataset. Its contract protects record shape and domain invariants; it must not freeze the current record count, require contiguous identifiers, or treat current coverage statistics as permanent requirements.
 
 ### Source
 
@@ -111,6 +110,8 @@ A human-readable list of uncertain matches, missing enrichment, or proposed chan
 - `county`: county-centre fallback requiring extra caution.
 
 All frontend coordinates are expected to align with the GCJ-02 coordinate system used by AMap.
+
+Runtime coordinates must also fall within a deliberately broad Shanxi geographic envelope. This is a hard guard against swapped coordinates and obvious out-of-province drift, not proof that a coordinate is precise or correctly sourced; `geo_precision`, provenance, and human review retain those responsibilities.
 
 ## Engineering language
 
