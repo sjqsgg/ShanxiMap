@@ -65,6 +65,14 @@ export type BuildingValidationIssue = {
   recordId?: unknown;
 };
 
+export function formatBuildingValidationIssue(
+  issue: BuildingValidationIssue,
+): string {
+  const record =
+    issue.recordId === undefined ? "" : ` (id ${String(issue.recordId)})`;
+  return `${issue.path}${record}: ${issue.message}`;
+}
+
 function appendUnknownFieldIssues({
   issues,
   record,

@@ -76,7 +76,7 @@ A source-backed annotation indicating a documented survey or visit by members of
 
 ### Runtime artifact
 
-`src/data/buildings.json`, the JSON bundled into the frontend build. The pure `validateBuildings(unknown)` boundary encodes the complete runtime schema, and `npm run validate:data` applies it to the committed artifact. The application still loads the JSON with a TypeScript assertion instead of calling that boundary; application-load enforcement is the next contract slice.
+`src/data/buildings.json`, the JSON bundled into the frontend build. The pure `validateBuildings(unknown)` boundary encodes the complete runtime schema. Tests, `npm run validate:data`, and the application data module all call that same validator; invalid data produces locatable issues and prevents the application from loading or building.
 
 The current 532-record collection is an initial runtime release, not the fixed final dataset. Its contract protects record shape and domain invariants; it must not freeze the current record count, require contiguous identifiers, or treat current coverage statistics as permanent requirements.
 

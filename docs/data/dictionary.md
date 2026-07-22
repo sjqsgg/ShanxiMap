@@ -2,7 +2,7 @@
 
 Status: `src/data/buildings.json` at 2026-07-22
 
-The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. The pure `validateBuildings(unknown)` boundary checks the complete runtime record shape and returns trusted `Building[]` only when every record passes; `npm run validate:data` applies that same boundary to the committed artifact.
+The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. The pure `validateBuildings(unknown)` boundary checks the complete runtime record shape and returns trusted `Building[]` only when every record passes. Tests, `npm run validate:data`, and `src/lib/data.ts` all call that same boundary.
 
 ## Identity and classification
 
@@ -64,13 +64,14 @@ Current description counts: 70 manual, 379 wiki, 83 template. There are 16 Yingz
 
 Current enrichment coverage: 144 images, 102 telephone values, 358 string ratings, and 26 transitional empty-array ratings.
 
-## Contract enforcement and remaining boundary
+## Contract enforcement
 
 - Runtime records and nested image objects reject unknown fields. Source and intermediate schemas are not constrained by this frontend contract.
 - IDs are unique positive integers but need not be contiguous; the collection must be a non-empty array but is not fixed at 532 records.
 - City, heritage type, description source, and coordinate precision are strict enums. Display and source text such as dynasty, address, county, batch number, and `geo_source` remains open.
 - `yingzao` and `yingzao_source` must be absent together, empty together, or non-empty together.
 - The CLI can validate the committed artifact or an explicit candidate path and exits non-zero after reporting every issue.
-- The application still loads JSON through a TypeScript assertion. Calling the same validator at application load, so invalid data also directly blocks development and production builds, is the next contract ticket.
+- The application loads the runtime JSON through the same validator. Invalid data throws one stable error containing every issue path and summary, preventing development or production builds from silently using it.
+- Page, filter, map, and static-detail consumers receive the one validated `Building[]` export and do not repeat schema checks.
 
 Adding, removing, or changing a runtime field requires one reviewed migration across data, type, validator, tests, consumers, and this dictionary.

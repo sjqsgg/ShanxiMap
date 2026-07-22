@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { groupByCity } from "./data";
+import { groupByCity, loadBuildings } from "./data";
 import type { Building } from "./types";
 
 function building(
@@ -42,5 +42,26 @@ test("city groups sort archives by chronology, name, and stable ID", () => {
   assert.deepEqual(
     groups[0]?.[1].map(({ id }) => id),
     [3, 7, 9, 5],
+  );
+});
+
+test("application loading rejects invalid runtime data with every issue summary", () => {
+  const input = [
+    {
+      ...building(1, "佛光寺", 857),
+      name: undefined,
+      tier: "must_visit",
+    },
+  ];
+
+  assert.throws(
+    () => loadBuildings(input),
+    new Error(
+      [
+        "Invalid building runtime data:",
+        '$[0].tier (id 1): Unknown building field "tier".',
+        "$[0].name (id 1): Expected a string.",
+      ].join("\n"),
+    ),
   );
 });

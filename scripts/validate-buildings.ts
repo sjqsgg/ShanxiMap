@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { validateBuildings } from "../src/lib/validate-buildings";
+import {
+  formatBuildingValidationIssue,
+  validateBuildings,
+} from "../src/lib/validate-buildings";
 
 const runtimeDataPath = path.resolve(
   process.argv[2] ?? "src/data/buildings.json",
@@ -22,8 +25,7 @@ if (input !== undefined) {
     console.log(`Validated ${result.data.length} building records.`);
   } else {
     for (const issue of result.issues) {
-      const id = issue.recordId === undefined ? "" : ` (id ${issue.recordId})`;
-      console.error(`${issue.path}${id}: ${issue.message}`);
+      console.error(formatBuildingValidationIssue(issue));
     }
     process.exitCode = 1;
   }

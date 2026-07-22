@@ -1,8 +1,23 @@
 import raw from "@/data/buildings.json";
-import type { Building } from "./types";
-import { CITY_ORDER } from "./types";
+import { CITY_ORDER, type Building } from "./types";
+import {
+  formatBuildingValidationIssue,
+  validateBuildings,
+} from "./validate-buildings";
 
-export const BUILDINGS: Building[] = raw as unknown as Building[];
+export function loadBuildings(input: unknown): Building[] {
+  const result = validateBuildings(input);
+  if (result.ok) return result.data;
+
+  throw new Error(
+    [
+      "Invalid building runtime data:",
+      ...result.issues.map(formatBuildingValidationIssue),
+    ].join("\n"),
+  );
+}
+
+export const BUILDINGS = loadBuildings(raw);
 
 export function byId(id: number): Building | undefined {
   return BUILDINGS.find((b) => b.id === id);

@@ -6,7 +6,7 @@ This document records the current, partially overlapping pipeline. It does not c
 
 ## Frontend boundary
 
-`src/data/buildings.json` is the only dataset imported by the application. Any pipeline change is incomplete until the intended result is validated and deliberately promoted to this path.
+`src/data/buildings.json` is the only dataset imported by the application. `src/lib/data.ts` passes it through the complete runtime validator before exposing it to any route or component. Any pipeline change is incomplete until the intended result is validated and deliberately promoted to this path.
 
 ## Original Python flow
 
@@ -71,8 +71,9 @@ The contract does not freeze the current 532-record count or require contiguous
 IDs. A collection-size change and cross-release ID retirement/reuse still need
 explicit human review because a single candidate cannot prove historical
 identity. TypeScript and the production build also remain required before
-promotion. The CLI validates a candidate; it does not promote or overwrite the
-runtime artifact.
+promotion. The production build re-executes the same validator at application
+loading, so an invalid promoted artifact stops page generation. The CLI
+validates a candidate; it does not promote or overwrite the runtime artifact.
 
 Legacy source and intermediate artifacts may still carry the retired `tier` field because their schemas are not the frontend runtime contract. Promotion scripts must drop it rather than copying it into `src/data/buildings.json`; enrichment and image reports no longer organise records by that field.
 
