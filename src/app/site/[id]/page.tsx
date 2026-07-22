@@ -120,13 +120,10 @@ export default async function SitePage({
           </span>
         </div>
 
-        <div className="mt-6 flex items-start justify-between gap-4">
+        <div className="mt-6">
           <h2 className="font-serif text-4xl font-bold text-ink sm:text-5xl">
             {b.name}
           </h2>
-          <span className="seal-stamp h-14 w-14 shrink-0 text-base">
-            {b.tier}
-          </span>
         </div>
 
         <p className="mt-4 font-mono text-sm text-ink-soft">

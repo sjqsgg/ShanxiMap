@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { Building, Tier } from "@/lib/types";
-import { TIER_COLOR } from "@/lib/types";
+import type { Building } from "@/lib/types";
 
 declare global {
   interface Window {
@@ -12,7 +11,10 @@ declare global {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const SIZE: Record<Tier, number> = { 必去: 16, 推荐: 10, 小众: 6, 可选: 6 };
+const BASE_MARKER_SIZE = 8;
+const BASE_MARKER_COLOR = "#746b5f";
+const SELECTED_MARKER_COLOR = "#9e2b20";
+const DEFAULT_TEXT_ZOOMS: [number, number] = [11, 20];
 
 /** 山西省范围 + 缩放限制 */
 const SHANXI_BOUNDS: [[number, number], [number, number]] = [
@@ -49,8 +51,8 @@ function loadView(): { zoom: number; center: [number, number] } | null {
 }
 
 function iconUri(b: Building, selected: boolean): string {
-  const color = TIER_COLOR[b.tier];
-  const d = SIZE[b.tier] + (selected ? 5 : 0);
+  const color = selected ? SELECTED_MARKER_COLOR : BASE_MARKER_COLOR;
+  const d = BASE_MARKER_SIZE + (selected ? 5 : 0);
   const pad = 6;
   const s = d + pad * 2;
   const c = s / 2;
@@ -68,16 +70,9 @@ function iconUri(b: Building, selected: boolean): string {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-/** 名称label显示阈值：必去常显；推荐 zoom≥10；小众/可选 zoom≥11（hover时任何等级都显示） */
-function textZooms(tier: Tier): [number, number] {
-  if (tier === "必去") return [2, 20];
-  if (tier === "推荐") return [10, 20];
-  return [11, 20];
-}
-
-function textStyle(b: Building, selected: boolean) {
+function textStyle(selected: boolean) {
   return {
-    fontSize: b.tier === "必去" ? 13 : 12,
+    fontSize: 12,
     fillColor: selected ? "#9e2b20" : "#3d3120",
     strokeColor: "#f3ecdc",
     strokeWidth: 3,
@@ -175,16 +170,12 @@ export default function MapCanvas({
     layer.clear();
     const markers = list.map((b) => {
       const selected = b.id === sel;
-      const d = SIZE[b.tier] + (selected ? 5 : 0) + 12;
-      const zooms = selected ? [2, 20] : textZooms(b.tier);
+      const d = BASE_MARKER_SIZE + (selected ? 5 : 0) + 12;
+      const zooms = selected ? [2, 20] : DEFAULT_TEXT_ZOOMS;
       const m = new AMap.LabelMarker({
         position: [b.lng, b.lat],
-        zIndex:
-          (b.tier === "必去" ? 40 : b.tier === "推荐" ? 30 : 20) +
-          (selected ? 50 : 0),
-        rank:
-          (b.tier === "必去" ? 4000 : b.tier === "推荐" ? 3000 : 2000) +
-          (selected ? 9000 : 0),
+        zIndex: 20 + (selected ? 50 : 0),
+        rank: 2000 + (selected ? 9000 : 0),
         icon: {
           image: iconUri(b, selected),
           size: [d, d],
@@ -195,7 +186,7 @@ export default function MapCanvas({
           direction: "right",
           offset: [1, 0],
           zooms,
-          style: textStyle(b, selected),
+          style: textStyle(selected),
         },
         extData: { id: b.id },
       });
@@ -203,15 +194,15 @@ export default function MapCanvas({
         const id = e.target?.getExtData?.()?.id;
         if (id) onSelectRef.current(id);
       });
-      // hover 显示名称（非常显等级）
-      if (b.tier !== "必去" && !selected) {
+      // hover 显示名称；未选中地点使用相同的常规显示阈值
+      if (!selected) {
         m.on("mouseover", () => {
           m.setText({
             content: b.name,
             direction: "right",
             offset: [1, 0],
             zooms: [2, 20],
-            style: textStyle(b, false),
+            style: textStyle(false),
           });
         });
         m.on("mouseout", () => {
@@ -219,8 +210,8 @@ export default function MapCanvas({
             content: b.name,
             direction: "right",
             offset: [1, 0],
-            zooms: textZooms(b.tier),
-            style: textStyle(b, false),
+            zooms: DEFAULT_TEXT_ZOOMS,
+            style: textStyle(false),
           });
         });
       }

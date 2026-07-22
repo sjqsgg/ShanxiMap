@@ -5,50 +5,23 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BUILDINGS, byId } from "@/lib/data";
-import type { Tier } from "@/lib/types";
-import { DEFAULT_TYPES, dynastyGroup } from "@/lib/types";
+import {
+  filterBuildingsByMapFilters,
+  parseMapFilters,
+  serializeMapFilters,
+} from "@/lib/map-filters";
+import type { MapFilters } from "@/lib/map-filters";
 import { useIsDesktop } from "@/lib/useIsDesktop";
 import MapCanvas from "./MapCanvas";
 import FilterPanel from "./FilterPanel";
+import MapLegend from "./MapLegend";
 import Sidebar from "./Sidebar";
 import PreviewDrawer from "./PreviewDrawer";
-
-export type Filters = {
-  dynasties: string[];
-  cities: string[];
-  tiers: Tier[];
-  types: string[];
-  yingzao: boolean;
-  q: string;
-};
-
-const EMPTY: Filters = {
-  dynasties: [],
-  cities: [],
-  tiers: [],
-  types: Array.from(DEFAULT_TYPES),
-  yingzao: false,
-  q: "",
-};
-
-function parseFilters(sp: URLSearchParams): Filters {
-  const list = (k: string) =>
-    sp.get(k)?.split(",").filter(Boolean) ?? [];
-  const types = list("type");
-  return {
-    dynasties: list("dyn"),
-    cities: list("city"),
-    tiers: list("tier") as Tier[],
-    types: types.length ? types : EMPTY.types,
-    yingzao: sp.get("yz") === "1",
-    q: sp.get("q") ?? "",
-  };
-}
 
 export default function MapApp() {
   const router = useRouter();
   const sp = useSearchParams();
-  const [filters, setFilters] = useState<Filters>(() => parseFilters(sp));
+  const [filters, setFilters] = useState<MapFilters>(() => parseMapFilters(sp));
   const [selectedId, setSelectedId] = useState<number | null>(() => {
     const id = Number(sp.get("id"));
     return Number.isFinite(id) && id > 0 ? id : null;
@@ -71,37 +44,15 @@ export default function MapApp() {
 
   // URL 同步（replace，不产生历史记录）；详情深链已迁移至 /site/[id]，不再写 id
   useEffect(() => {
-    const p = new URLSearchParams();
-    if (filters.dynasties.length) p.set("dyn", filters.dynasties.join(","));
-    if (filters.cities.length) p.set("city", filters.cities.join(","));
-    if (filters.tiers.length) p.set("tier", filters.tiers.join(","));
-    const defaultTypes =
-      filters.types.length === EMPTY.types.length &&
-      EMPTY.types.every((t) => filters.types.includes(t));
-    if (!defaultTypes) p.set("type", filters.types.join(","));
-    if (filters.yingzao) p.set("yz", "1");
-    if (filters.q) p.set("q", filters.q);
+    const p = serializeMapFilters(filters);
     const qs = p.toString();
     router.replace(`/map${qs ? `?${qs}` : ""}`, { scroll: false });
   }, [filters, selectedId, router]);
 
-  const filtered = useMemo(() => {
-    const q = filters.q.trim();
-    return BUILDINGS.filter((b) => {
-      if (!filters.types.includes(b.type)) return false;
-      if (filters.tiers.length && !filters.tiers.includes(b.tier)) return false;
-      if (filters.cities.length && !filters.cities.includes(b.city))
-        return false;
-      if (filters.dynasties.length) {
-        const g = dynastyGroup(b);
-        if (!g || !filters.dynasties.includes(g)) return false;
-      }
-      if (filters.yingzao && !b.yingzao) return false;
-      if (q && !`${b.name}${b.city}${b.county}${b.dynasty}`.includes(q))
-        return false;
-      return true;
-    });
-  }, [filters]);
+  const filtered = useMemo(
+    () => filterBuildingsByMapFilters(BUILDINGS, filters),
+    [filters],
+  );
 
   const selected = selectedId ? byId(selectedId) ?? null : null;
   const onSelect = useCallback((id: number | null) => setSelectedId(id), []);
@@ -180,23 +131,7 @@ export default function MapApp() {
       {/* 预览抽屉 */}
       <PreviewDrawer building={selected} onClose={() => onSelect(null)} />
 
-      {/* 图例 */}
-      <div className="pointer-events-none absolute bottom-2 left-2 z-10 hidden sm:block">
-        <div className="frosted border border-line px-3 py-2 font-mono text-[10px] leading-relaxed text-ink-soft">
-          <p>
-            <span className="mr-1 inline-block h-3 w-3 rounded-full bg-[#8B1A1A] align-[-2px]" />
-            必去
-            <span className="ml-3 mr-1 inline-block h-2.5 w-2.5 rounded-full bg-[#8B5E3C] align-[-1px]" />
-            推荐
-            <span className="ml-3 mr-1 inline-block h-2 w-2 rounded-full bg-[#999990]" />
-            小众
-            <span className="ml-3 mr-1 inline-block h-2 w-2 rotate-45 bg-[#999990]" />
-            石窟
-            <span className="ml-3 border border-seal px-1 text-seal">测</span>
-            营造学社
-          </p>
-        </div>
-      </div>
+      <MapLegend />
     </div>
   );
 }

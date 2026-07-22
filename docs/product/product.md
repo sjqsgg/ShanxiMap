@@ -1,6 +1,6 @@
 # Product definition
 
-Status: current baseline, 2026-07-20
+Status: current baseline, 2026-07-22
 
 ## Purpose
 
@@ -11,14 +11,14 @@ The product uses the metaphor of a paper archive: official batch, year, chronolo
 ## Intended users
 
 - Travellers planning focused visits to historic architecture in Shanxi.
-- Architecture and heritage enthusiasts comparing sites by dynasty, city, type, or editorial priority.
+- Architecture and heritage enthusiasts comparing sites by dynasty, city, type, or other factual attributes.
 - Returning users who want to use the homepage map, open the dedicated map page, or revisit a stable archive detail page.
 
 ## Product principles
 
 - Heritage-led, culturally opportunistic: keep the archive grounded in historic architecture and reliable information, while actively using relevant films, public figures, trends, and popular-culture connections when they help discovery or distribution.
 - Explicit editorial exclusion: do not use *Black Myth: Wukong* (《黑神话：悟空》) as a promotional hook, content association, or framing device.
-- Evidence-aware: distinguish sourced facts, generated summaries, editorial rankings, approximate coordinates, and unknown information.
+- Evidence-aware: distinguish sourced facts, generated summaries, source-backed annotations, approximate coordinates, and unknown information.
 - Practical discovery: help users search, filter, locate, and preview a site, then explicitly hand navigation off to AMap.
 - Archival visual language: paper, ink, cinnabar, monospaced metadata, rules, seals, and restrained frosted overlays.
 - Static-first: the current product remains useful without accounts, a backend, or community features.
@@ -32,13 +32,13 @@ The product uses the metaphor of a paper archive: official batch, year, chronolo
 - Reveals the homepage map after the user scrolls through the introduction.
 - Provides single-select filters on the homepage map.
 - Opens a narrow archive preview when the user selects a marker; the user can then choose to open the full archive detail.
-- Provides a city-grouped building index after the map; selecting an index entry opens its archive detail directly.
+- Provides a city-grouped building index after the map; selecting an index entry currently scrolls back to the map, selects the marker, and opens the archive preview. Direct detail navigation remains the accepted target behavior described below.
 - Also links to the optional dedicated map page.
 
 ### `/map` — dedicated map page
 
 - Displays the current filtered set on AMap.
-- Supports text search and multi-select dynasty, city, tier, type, and Yingzao Society filters.
+- Supports text search and multi-select dynasty, city, type, and Yingzao Society filters.
 - Synchronises filter state to the URL.
 - Offers a result sidebar and preview drawer.
 - Uses `/site/[id]` as the archive-detail deep link.
@@ -119,7 +119,7 @@ The principle is “return to the user's previous working context when it exists
 ## Current collection
 
 - 532 records and 532 unique IDs.
-- Visit tiers: 21 必去, 49 推荐, 368 小众, 94 可选.
+- The artifact still contains a transitional legacy `tier` field (21 必去, 49 推荐, 368 小众, 94 可选), but discovery, map presentation, previews, and archive details no longer consume or display it; its contract removal is a separate migration.
 - Types: 422 古建筑, 15 石窟寺及石刻, 46 古遗址, 20 古墓葬, 28 近现代/革命史迹, 1 其他.
 - 532 records have coordinates.
 - Description sources: 70 manual, 379 wiki, 83 template.
@@ -129,7 +129,7 @@ These values describe the committed dataset at the status date; documentation mu
 
 ## Non-goals for the current baseline
 
-- Treating editorial visit tiers as official heritage classifications.
+- Reintroducing editorial visit tiers, fame scores, or other value rankings as heritage classifications or discovery priority.
 - Claiming generated descriptions or approximate coordinates are authoritative.
 - Route planning, bookings, opening-hours guarantees, or live operational status.
 - A general-purpose tourism platform for all Shanxi attractions.

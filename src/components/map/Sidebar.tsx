@@ -1,7 +1,7 @@
 "use client";
 
 import type { Building } from "@/lib/types";
-import { TIER_COLOR, archiveNo } from "@/lib/types";
+import { archiveNo } from "@/lib/types";
 
 export default function Sidebar({
   buildings,
@@ -36,8 +36,7 @@ export default function Sidebar({
               }`}
             >
               <span
-                className="mt-1 h-2.5 w-2.5 shrink-0 self-center rounded-full"
-                style={{ background: TIER_COLOR[b.tier] }}
+                className="mt-1 h-2.5 w-2.5 shrink-0 self-center rounded-full bg-ink-soft"
               />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-serif text-sm font-bold text-ink">

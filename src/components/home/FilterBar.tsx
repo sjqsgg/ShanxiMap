@@ -1,24 +1,20 @@
 "use client";
 
-import type { Tier } from "@/lib/types";
 import { CITIES, DYNASTY_GROUPS } from "@/lib/types";
 
 export type HomeFilter = {
   dynasty: string | null;
   city: string | null;
   type: string | null;
-  tier: Tier | null;
 };
 
 export const HOME_FILTER_EMPTY: HomeFilter = {
   dynasty: null,
   city: null,
   type: null,
-  tier: null,
 };
 
 const TYPES = ["古建筑", "石窟寺及石刻", "古遗址", "古墓葬", "近现代/革命史迹"];
-const TIERS: Tier[] = ["必去", "推荐", "小众"];
 
 function Row({
   label,
@@ -56,7 +52,7 @@ function Row({
   );
 }
 
-/** 首页地图区顶部筛选栏：朝代 / 地市 / 类型 / 访古等级（单选） */
+/** 首页地图区顶部筛选栏：朝代 / 地市 / 类型（单选） */
 export default function FilterBar({
   filter,
   onChange,
@@ -91,12 +87,6 @@ export default function FilterBar({
         value={filter.type}
         onPick={(v) => onChange({ ...filter, type: v })}
         short={(t) => (t === "近现代/革命史迹" ? "近现代" : t)}
-      />
-      <Row
-        label="等级"
-        options={TIERS}
-        value={filter.tier}
-        onPick={(v) => onChange({ ...filter, tier: v as Tier | null })}
       />
     </div>
   );

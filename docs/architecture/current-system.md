@@ -1,6 +1,6 @@
 # Current system architecture
 
-Status: observed baseline, 2026-07-20
+Status: observed baseline, 2026-07-22
 
 This document describes the implementation that exists today. It is not a target architecture.
 
@@ -34,8 +34,8 @@ AMap loader <------------------ browser environment variables
 ### Client interaction
 
 - `src/components/home/HomeClient.tsx`: homepage filter state, selection state, index grouping, embedded map, and preview.
-- `src/components/map/MapApp.tsx`: dedicated map filters, query-string synchronisation, selection, list/panel state, and preview.
-- `src/components/map/MapCanvas.tsx`: AMap SDK loading and lifecycle, province layer, label markers, map view persistence, selection rendering, and camera movement.
+- `src/components/map/MapApp.tsx`: dedicated map filter state, query-string synchronisation, selection, list/panel state, and preview; its pure filter and URL transformations live in `src/lib/map-filters.ts`.
+- `src/components/map/MapCanvas.tsx`: AMap SDK loading and lifecycle, province layer, label markers, map view persistence, selection rendering, and camera movement. All site archives use one neutral base marker weight; selection may increase prominence, while the grotto shape and Yingzao badge remain factual distinctions.
 - `PreviewDrawer.tsx` is shared by both map experiences.
 - `SitePlaceholders.tsx` renders disabled visitor-note and visit-state UI. It has no persistence, identity, submission, or backend integration. Its combined “我要去 · 收藏” label conflicts with the accepted two-state model and is obsolete placeholder copy.
 
@@ -43,8 +43,8 @@ The accepted first-release visit-state model is private rather than aggregate: g
 
 ### Domain and data access
 
-- `src/lib/types.ts`: TypeScript data shape, enums, grouping constants, colours, and archive-number formatting.
-- `src/lib/data.ts`: imports the runtime JSON, asserts it to `Building[]`, derives statistics, grouping, distance, and nearby-site results.
+- `src/lib/types.ts`: TypeScript data shape, enums, grouping constants, transitional legacy tier declarations, and archive-number formatting.
+- `src/lib/data.ts`: imports the runtime JSON, asserts it to `Building[]`, derives statistics, chronology-first city grouping, distance, and nearby-site results.
 - The application import boundary still asserts JSON as TypeScript without validation. A separate baseline command validates essential collection fields, but it is not yet the complete runtime schema or part of application loading.
 
 ### Data tooling
@@ -57,10 +57,10 @@ The accepted first-release visit-state model is private rather than aggregate: g
 
 The homepage and dedicated map intentionally use different filter shapes today:
 
-- Homepage: single value per dynasty, city, type, and tier; no query-string persistence.
-- Dedicated map: multi-select arrays, text search, Yingzao-only toggle, and query-string persistence.
+- Homepage: single value per dynasty, city, and type; no query-string persistence.
+- Dedicated map: multi-select dynasty, city, and type arrays, text search, Yingzao-only toggle, and query-string persistence. A legacy `tier` query parameter is ignored and is not written back to a shareable URL.
 
-Both independently implement filtering, selection, map displacement, legends, and preview wiring. `MapCanvas` is shared, but the surrounding domain logic is duplicated.
+Both independently implement filtering, selection, map displacement, legends, and preview wiring. `MapCanvas` is shared, and the dedicated map now uses a tested pure filter/URL seam, but the surrounding domain logic is still duplicated.
 
 The accepted product model is one shared map explorer with homepage and direct presentation modes. The current duplicated surrounding logic does not yet implement that model and should be reconciled through tested vertical slices. The explorer itself is for discovery and selection; route navigation remains an external AMap handoff.
 

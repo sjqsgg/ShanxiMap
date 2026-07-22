@@ -10,6 +10,7 @@ import FilterBar, { HOME_FILTER_EMPTY } from "./FilterBar";
 import type { HomeFilter } from "./FilterBar";
 import IndexList from "./IndexList";
 import MapCanvas from "@/components/map/MapCanvas";
+import MapLegend from "@/components/map/MapLegend";
 import PreviewDrawer from "@/components/map/PreviewDrawer";
 
 /** 首页：档案袋 → 地图 + 索引列表 + 预览抽屉 */
@@ -23,7 +24,6 @@ export default function HomeClient() {
     () =>
       BUILDINGS.filter((b) => {
         if (filter.type && b.type !== filter.type) return false;
-        if (filter.tier && b.tier !== filter.tier) return false;
         if (filter.city && b.city !== filter.city) return false;
         if (filter.dynasty && dynastyGroup(b) !== filter.dynasty) return false;
         return true;
@@ -64,21 +64,7 @@ export default function HomeClient() {
               onSelect={onSelect}
             />
           </motion.div>
-          {/* 图例 */}
-          <div className="pointer-events-none absolute bottom-2 left-2 z-10 hidden sm:block">
-            <div className="frosted border border-line px-3 py-2 font-mono text-[10px] leading-relaxed text-ink-soft">
-              <span className="mr-1 inline-block h-3 w-3 rounded-full bg-[#8B1A1A] align-[-2px]" />
-              必去
-              <span className="ml-3 mr-1 inline-block h-2.5 w-2.5 rounded-full bg-[#8B5E3C] align-[-1px]" />
-              推荐
-              <span className="ml-3 mr-1 inline-block h-2 w-2 rounded-full bg-[#999990]" />
-              小众
-              <span className="ml-3 mr-1 inline-block h-2 w-2 rotate-45 bg-[#999990]" />
-              石窟
-              <span className="ml-3 border border-seal px-1 text-seal">测</span>
-              营造学社
-            </div>
-          </div>
+          <MapLegend />
         </section>
 
         {/* 索引列表 */}

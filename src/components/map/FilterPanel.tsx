@@ -1,10 +1,8 @@
 "use client";
 
-import type { Filters } from "./MapApp";
-import type { Tier } from "@/lib/types";
+import type { MapFilters } from "@/lib/map-filters";
+import { DEFAULT_MAP_TYPES } from "@/lib/map-filters";
 import { CITIES, DYNASTY_GROUPS, TYPE_GROUPS } from "@/lib/types";
-
-const TIERS: Tier[] = ["必去", "推荐", "小众", "可选"];
 
 function Chip({
   active,
@@ -37,8 +35,8 @@ export default function FilterPanel({
   filters,
   onChange,
 }: {
-  filters: Filters;
-  onChange: (f: Filters) => void;
+  filters: MapFilters;
+  onChange: (f: MapFilters) => void;
 }) {
   const row = "flex flex-wrap items-center gap-1.5";
   const label =
@@ -46,19 +44,6 @@ export default function FilterPanel({
   return (
     <div className="pointer-events-auto frosted max-h-[55vh] overflow-y-auto border border-line px-4 py-3">
       <div className="flex flex-col gap-2.5">
-        <div className={row}>
-          <span className={label}>等级</span>
-          {TIERS.map((t) => (
-            <Chip
-              key={t}
-              label={t}
-              active={filters.tiers.includes(t)}
-              onClick={() =>
-                onChange({ ...filters, tiers: toggle(filters.tiers, t) })
-              }
-            />
-          ))}
-        </div>
         <div className={row}>
           <span className={label}>朝代</span>
           {DYNASTY_GROUPS.map((d) => (
@@ -113,8 +98,7 @@ export default function FilterPanel({
               onChange({
                 dynasties: [],
                 cities: [],
-                tiers: [],
-                types: ["古建筑", "石窟寺及石刻", "其他"],
+                types: DEFAULT_MAP_TYPES,
                 yingzao: false,
                 q: "",
               })

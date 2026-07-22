@@ -43,11 +43,7 @@ function CityGroup({
           <button
             key={b.id}
             onClick={() => onPick(b.id)}
-            className={`mr-4 inline font-serif text-[15px] transition-colors hover:text-cinnabar ${
-              b.tier === "必去"
-                ? "text-ink underline decoration-cinnabar decoration-2 underline-offset-4"
-                : "text-ink-soft"
-            }`}
+            className="mr-4 inline font-serif text-[15px] text-ink-soft transition-colors hover:text-cinnabar"
           >
             {b.name}
           </button>

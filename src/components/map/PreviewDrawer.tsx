@@ -118,13 +118,10 @@ export default function PreviewDrawer({
                 </span>
               </div>
 
-              <div className="mt-3 flex items-start justify-between gap-3">
+              <div className="mt-3">
                 <h2 className="font-serif text-2xl font-bold leading-snug text-ink">
                   {building.name}
                 </h2>
-                <span className="seal-stamp h-11 w-11 shrink-0 text-[13px]">
-                  {building.tier}
-                </span>
               </div>
 
               <p className="mt-2 font-mono text-[11px] text-ink-soft">
