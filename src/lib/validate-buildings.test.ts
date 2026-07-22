@@ -9,7 +9,6 @@ const validBuilding = {
   city: "忻州市",
   type: "古建筑",
   earliest_dynasty: "唐",
-  tier: "必去",
   lat: 38.868,
   lng: 113.387,
 };
@@ -111,18 +110,6 @@ test("rejects non-finite coordinates", () => {
       {
         code: "expected_finite_number",
         path: "$[0].lng",
-        recordId: 1,
-      },
-  ]);
-});
-
-test("rejects an unsupported visit tier", () => {
-  const input = [{ ...validBuilding, tier: "顶级" }];
-
-  assert.deepEqual(validationIssues(input), [
-      {
-        code: "unsupported_tier",
-        path: "$[0].tier",
         recordId: 1,
       },
   ]);

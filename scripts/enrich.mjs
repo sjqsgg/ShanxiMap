@@ -296,8 +296,6 @@ async function runWiki(ckpt) {
 // ── Report generation ───────────────────────────────────────
 
 function generateReport(ckpt) {
-  const TIER_ORDER = ["必去", "推荐", "小众", "可选"];
-
   let amapHits = 0, wikiHits = 0;
   for (const b of buildings) {
     if (ckpt.amap[b.id]?.matched) amapHits++;
@@ -316,7 +314,6 @@ function generateReport(ckpt) {
     buildings: buildings.map((b) => ({
       id: b.id,
       name: b.name,
-      tier: b.tier,
       type: b.type,
       city: b.city,
       dynasty: b.dynasty,
@@ -391,22 +388,18 @@ function generateReport(ckpt) {
   md += "### 描述可升级\n\n";
   md += `模板描述 + 维基命中 = **${upgradeable.length}** 条可直接替换\n\n`;
 
-  // per-tier details
-  for (const tier of TIER_ORDER) {
-    const group = json.buildings
-      .filter((b) => b.tier === tier)
-      .sort((a, b) => {
-        const wa = a.wiki.matched ? 0 : 1;
-        const wb = b.wiki.matched ? 0 : 1;
-        if (wa !== wb) return wa - wb;
-        const da = a.current.desc_source === "template" ? 0 : 1;
-        const db = b.current.desc_source === "template" ? 0 : 1;
-        return da - db;
-      });
+  const reviewBuildings = [...json.buildings].sort((a, b) => {
+    const wa = a.wiki.matched ? 0 : 1;
+    const wb = b.wiki.matched ? 0 : 1;
+    if (wa !== wb) return wa - wb;
+    const da = a.current.desc_source === "template" ? 0 : 1;
+    const db = b.current.desc_source === "template" ? 0 : 1;
+    return da - db;
+  });
 
-    md += `---\n\n## ${tier}（${group.length} 条）\n\n`;
+  md += `---\n\n## 地点档案（${reviewBuildings.length} 条）\n\n`;
 
-    for (const b of group) {
+  for (const b of reviewBuildings) {
       const isTemplate = b.current.desc_source === "template";
       const hasWiki = b.wiki.matched;
       const flag = isTemplate && hasWiki ? " -> 可替换" : "";
@@ -449,7 +442,6 @@ function generateReport(ckpt) {
           }
         }
       }
-    }
   }
 
   fs.writeFileSync(path.join(ROOT, "data/enrichment-review.md"), md);

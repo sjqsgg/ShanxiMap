@@ -1,8 +1,8 @@
 # Runtime data dictionary
 
-Status: `src/data/buildings.json` at 2026-07-20
+Status: `src/data/buildings.json` at 2026-07-22
 
-The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. `npm run validate:data` now checks the collection shape, essential identity and map-display primitive types, unique IDs, finite coordinates, and visit tiers through a deterministic baseline validator.
+The runtime artifact contains 532 objects. The TypeScript declaration is `Building` in `src/lib/types.ts`. `npm run validate:data` checks the collection shape, essential identity and map-display primitive types, unique IDs, and finite coordinates through a deterministic baseline validator.
 
 ## Identity and classification
 
@@ -11,7 +11,6 @@ The runtime artifact contains 532 objects. The TypeScript declaration is `Buildi
 | `id` | number | Stable archive identifier; currently unique across all 532 records. |
 | `name` | string | Display name of the protected site. |
 | `type` | string | Official-style category used by product filters. Current values are 古建筑, 石窟寺及石刻, 古遗址, 古墓葬, 近现代/革命史迹, 其他. |
-| `tier` | enum | Editorial visit tier: 必去, 推荐, 小众, 可选. Not an official classification. |
 | `batch` | string | National-protection batch label. |
 | `batch_no` | string | Batch number in display-oriented form. |
 | `year` | number | Announcement year associated with the batch. |

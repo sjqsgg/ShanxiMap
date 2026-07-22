@@ -8,7 +8,7 @@ import {
   serializeMapFilters,
 } from "./map-filters";
 
-function building(id: number, tier: Building["tier"]): Building {
+function building(id: number, type = "古建筑"): Building {
   return {
     id,
     name: `地点 ${id}`,
@@ -18,11 +18,10 @@ function building(id: number, tier: Building["tier"]): Building {
     address: "山西省",
     city: "太原市",
     county: "",
-    type: "古建筑",
+    type,
     batch: "第一批全国重点文物保护单位",
     batch_no: "",
     year: 1961,
-    tier,
     lat: 37.8,
     lng: 112.5,
     description: "测试地点档案",
@@ -39,10 +38,10 @@ test("legacy tier query state is ignored and is not shared again", () => {
   assert.equal(serializeMapFilters(filters).has("tier"), false);
 });
 
-test("map discovery does not filter otherwise matching archives by legacy tier", () => {
+test("map discovery returns every archive matching factual filters", () => {
   const filters = parseMapFilters(new URLSearchParams("type=古建筑"));
   const matches = filterBuildingsByMapFilters(
-    [building(1, "必去"), building(2, "可选")],
+    [building(1), building(2), building(3, "古遗址")],
     filters,
   );
 

@@ -119,7 +119,7 @@ The principle is “return to the user's previous working context when it exists
 ## Current collection
 
 - 532 records and 532 unique IDs.
-- The artifact still contains a transitional legacy `tier` field (21 必去, 49 推荐, 368 小众, 94 可选), but discovery, map presentation, previews, and archive details no longer consume or display it; its contract removal is a separate migration.
+- The runtime artifact no longer contains the retired editorial visit-tier field; discovery and presentation use factual filters and equal base map-marker weight.
 - Types: 422 古建筑, 15 石窟寺及石刻, 46 古遗址, 20 古墓葬, 28 近现代/革命史迹, 1 其他.
 - 532 records have coordinates.
 - Description sources: 70 manual, 379 wiki, 83 template.

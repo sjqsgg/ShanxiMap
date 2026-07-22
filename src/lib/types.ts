@@ -1,5 +1,3 @@
-export type Tier = "必去" | "推荐" | "小众" | "可选";
-
 export type Building = {
   id: number;
   name: string;
@@ -13,7 +11,6 @@ export type Building = {
   batch: string;
   batch_no: string;
   year: number;
-  tier: Tier;
   lat: number;
   lng: number;
   description: string;
@@ -32,13 +29,6 @@ export type Building = {
     license: string;
     artist: string;
   };
-};
-
-export const TIER_COLOR: Record<Tier, string> = {
-  必去: "#8B1A1A",
-  推荐: "#8B5E3C",
-  小众: "#999990",
-  可选: "#b8b2a2",
 };
 
 /** 朝代筛选分组：把 北宋 归入 宋，近现代/明清等特殊值单独处理 */
@@ -89,13 +79,6 @@ export const CITY_ORDER = [
   "阳泉市",
   "朔州市",
 ] as const;
-
-export const TIER_RANK: Record<Tier, number> = {
-  必去: 0,
-  推荐: 1,
-  小众: 2,
-  可选: 3,
-};
 
 export const TYPE_GROUPS = [
   "古建筑",

@@ -1,6 +1,6 @@
 # Data pipeline baseline
 
-Status: observed repository state, 2026-07-20
+Status: observed repository state, 2026-07-22
 
 This document records the current, partially overlapping pipeline. It does not claim that every file is required or that the sequence is fully reproducible.
 
@@ -62,21 +62,23 @@ The scripts also emit logs and keep `data/buildings-backup.json`. Network-derive
 
 `npm run validate:data` now automates baseline checks for collection shape,
 essential identity and map-display primitive types, unique IDs, finite
-coordinates, and visit tiers. It validates the committed runtime artifact; it
+coordinates. It validates the committed runtime artifact; it
 does not promote a candidate or encode the complete contract.
 
 Before replacing the runtime artifact, also verify:
 
-- exactly 532 records unless a collection change is explicitly approved;
+- an explicitly reviewed collection change when the record count differs from the current 532; record count itself is not a permanent contract;
 - unique positive integer IDs;
 - finite coordinates within the expected Shanxi area;
-- supported tier, type, description-source, and precision values;
+- supported type, description-source, and precision values;
 - cross-field provenance rules;
 - image URLs and attribution fields when an image is present;
 - TypeScript and production build success.
 
 The checks beyond the baseline validator remain procedural documentation, not
 automated enforcement.
+
+Legacy source and intermediate artifacts may still carry the retired `tier` field because their schemas are not the frontend runtime contract. Promotion scripts must drop it rather than copying it into `src/data/buildings.json`; enrichment and image reports no longer organise records by that field.
 
 ## Target cleanup questions
 

@@ -230,29 +230,24 @@ async function main() {
   md += "- 网站底部或图片下方加一行 `图片来源: Wikimedia Commons (CC BY-SA)` 即可\n";
   md += "- `next/image` 配置 `remotePatterns` 允许 `upload.wikimedia.org`\n\n";
 
-  // Per-tier listing
-  const TIERS = ["必去", "推荐", "小众", "可选"];
-  for (const tier of TIERS) {
-    const group = buildings.filter((b) => b.tier === tier);
-    const withImg = group.filter((b) => result[b.id]);
-    const without = group.filter(
-      (b) => enrichCkpt.wiki[b.id]?.matched && !result[b.id]
-    );
+  const withImg = buildings.filter((b) => result[b.id]);
+  const without = buildings.filter(
+    (b) => enrichCkpt.wiki[b.id]?.matched && !result[b.id]
+  );
 
-    md += `---\n\n## ${tier}（${withImg.length}/${group.length} 有图）\n\n`;
+  md += `---\n\n## 地点档案（${withImg.length}/${buildings.length} 有图）\n\n`;
 
-    for (const b of withImg) {
-      const img = result[b.id];
-      md += `- **${b.name}** (id:${b.id}) — ${img.width}x${img.height} ${img.license}`;
-      md += img.artist ? ` by ${img.artist.slice(0, 60)}` : "";
-      md += `\n  ${img.thumb || img.url}\n`;
-    }
-
-    if (without.length) {
-      md += `\n**无图**: ${without.map((b) => b.name).join("、")}\n`;
-    }
-    md += "\n";
+  for (const b of withImg) {
+    const img = result[b.id];
+    md += `- **${b.name}** (id:${b.id}) — ${img.width}x${img.height} ${img.license}`;
+    md += img.artist ? ` by ${img.artist.slice(0, 60)}` : "";
+    md += `\n  ${img.thumb || img.url}\n`;
   }
+
+  if (without.length) {
+    md += `\n**无图**: ${without.map((b) => b.name).join("、")}\n`;
+  }
+  md += "\n";
 
   const mdPath = path.join(ROOT, "data/images-review.md");
   fs.writeFileSync(mdPath, md);

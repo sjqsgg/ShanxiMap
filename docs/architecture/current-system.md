@@ -43,7 +43,7 @@ The accepted first-release visit-state model is private rather than aggregate: g
 
 ### Domain and data access
 
-- `src/lib/types.ts`: TypeScript data shape, enums, grouping constants, transitional legacy tier declarations, and archive-number formatting.
+- `src/lib/types.ts`: TypeScript data shape, enums, grouping constants, and archive-number formatting.
 - `src/lib/data.ts`: imports the runtime JSON, asserts it to `Building[]`, derives statistics, chronology-first city grouping, distance, and nearby-site results.
 - The application import boundary still asserts JSON as TypeScript without validation. A separate baseline command validates essential collection fields, but it is not yet the complete runtime schema or part of application loading.
 

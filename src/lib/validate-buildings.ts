@@ -1,4 +1,4 @@
-import { TIER_RANK, type Building } from "./types";
+import type { Building } from "./types";
 
 export type ValidatedBuilding = Pick<
   Building,
@@ -7,7 +7,6 @@ export type ValidatedBuilding = Pick<
   | "city"
   | "type"
   | "earliest_dynasty"
-  | "tier"
   | "lat"
   | "lng"
 >;
@@ -19,8 +18,7 @@ export type BuildingValidationIssue = {
     | "expected_string"
     | "expected_number"
     | "duplicate_id"
-    | "expected_finite_number"
-    | "unsupported_tier";
+    | "expected_finite_number";
   path: string;
   message: string;
   recordId?: unknown;
@@ -97,18 +95,6 @@ export function validateBuildings(input: unknown): BuildingValidationResult {
           recordId: record.id,
         });
       }
-    }
-
-    if (
-      typeof record.tier !== "string" ||
-      !Object.hasOwn(TIER_RANK, record.tier)
-    ) {
-      issues.push({
-        code: "unsupported_tier",
-        path: `$[${index}].tier`,
-        message: "Expected one of: 必去, 推荐, 小众, 可选.",
-        recordId: record.id,
-      });
     }
   });
 

@@ -8,7 +8,6 @@ function building(
   id: number,
   name: string,
   dynastySort: number,
-  tier: Building["tier"],
 ): Building {
   return {
     id,
@@ -23,7 +22,6 @@ function building(
     batch: "第一批全国重点文物保护单位",
     batch_no: "",
     year: 1961,
-    tier,
     lat: 37.8,
     lng: 112.5,
     description: "测试地点档案",
@@ -32,10 +30,10 @@ function building(
 
 test("city groups sort archives by chronology, name, and stable ID", () => {
   const groups = groupByCity([
-    building(5, "Later", 200, "必去"),
-    building(9, "Beta", 100, "推荐"),
-    building(7, "Alpha", 100, "必去"),
-    building(3, "Alpha", 100, "可选"),
+    building(5, "Later", 200),
+    building(9, "Beta", 100),
+    building(7, "Alpha", 100),
+    building(3, "Alpha", 100),
   ]);
 
   assert.deepEqual(
